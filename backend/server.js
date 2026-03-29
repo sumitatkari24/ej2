@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const tripRoutes = require('./routes/tripRoutes');
@@ -22,10 +23,34 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve static frontend files (CSS, JS, images)
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.set('Content-Type', 'text/html');
+    }
+  }
+}));
 
-// Catch-all for SPA - serve index.html
+// Explicitly handle HTML pages
+const htmlPages = ['index', 'login', 'register', 'dashboard', 'trips', 'booking'];
+
+htmlPages.forEach(page => {
+  app.get(`/${page}`, (req, res) => {
+    res.sendFile(path.join(__dirname, `../frontend/${page}.html`));
+  });
+  
+  app.get(`/${page}.html`, (req, res) => {
+    res.sendFile(path.join(__dirname, `../frontend/${page}.html`));
+  });
+});
+
+// Root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// Catch-all - for any other routes, serve index.html (SPA fallback)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
