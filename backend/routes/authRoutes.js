@@ -16,6 +16,14 @@ router.post('/register', async (req, res) => {
   try {
     console.log('Register attempt for:', email);
     
+    // Check if mongoose is connected
+    if (!require('mongoose').connection.readyState) {
+      return res.status(503).json({ 
+        message: 'Database not available. Please contact support.',
+        hint: 'MongoDB connection failed. Check MONGO_URI environment variable.'
+      });
+    }
+    
     const userExists = await User.findOne({ email }).timeout(5000);
     
     if (userExists) {
