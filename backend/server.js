@@ -23,6 +23,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/bookings', bookingRoutes);
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    mongodb: process.env.MONGO_URI ? 'Configured' : 'Not configured',
+    timestamp: new Date()
+  });
+});
+
 // Serve static frontend files (CSS, JS, images)
 app.use(express.static(path.join(__dirname, '../frontend'), {
   setHeaders: (res, path) => {

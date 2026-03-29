@@ -38,7 +38,17 @@ async function handleRegister(e) {
       body: JSON.stringify({ name, email, password })
     });
     
-    const data = await response.json();
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      console.error('Non-JSON response:', text);
+      alert('Server error: ' + text);
+      throw new Error('Invalid server response');
+    }
     
     if (response.ok) {
       localStorage.setItem('token', data.token);
@@ -72,6 +82,7 @@ async function handleLogin(e) {
   submitBtn.textContent = 'Signing In...';
 
   try {
+    console.log('Attempting login with:', email);
     const response = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: {
@@ -80,7 +91,19 @@ async function handleLogin(e) {
       body: JSON.stringify({ email, password })
     });
     
-    const data = await response.json();
+    console.log('Response status:', response.status);
+    
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      console.error('Non-JSON response:', text);
+      alert('Server error: ' + text);
+      throw new Error('Invalid server response');
+    }
     
     if (response.ok) {
       localStorage.setItem('token', data.token);
