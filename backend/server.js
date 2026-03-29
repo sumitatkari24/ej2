@@ -17,29 +17,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API Routes
+// API Routes (MUST come before static files)
 app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '../frontend'), {
-  extensions: ['html', 'css', 'js', 'json']
-}));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Route handler for HTML pages without extensions
-app.get('/:page', (req, res) => {
-  const filePath = path.join(__dirname, '../frontend', req.params.page + '.html');
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      // If file doesn't exist, send index.html
-      res.sendFile(path.join(__dirname, '../frontend/index.html'));
-    }
-  });
-});
-
-// Catch-all for root and undefined routes
-app.get('/', (req, res) => {
+// Catch-all for SPA - serve index.html
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
