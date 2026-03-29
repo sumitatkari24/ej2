@@ -1,0 +1,65 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
+}
+
+.navbar {
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.12);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 1.35rem;
+}
+
+.card {
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.16);
+}
+
+.hero {
+  background: linear-gradient(135deg, #0052d4 0%, #4364f7 50%, #6fb1fc 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 40px 24px;
+  margin: 24px 0;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.9);
+}
+
+.btn-shadow {
+  box-shadow: 0 6px 12px rgba(22, 76, 166, 0.32);
+}
+
+.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+.card-title {
+  font-weight: 700;
+}
+
+.badge-status {
+  font-size: 0.8rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
