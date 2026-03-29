@@ -23,10 +23,23 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  extensions: ['html', 'css', 'js', 'json']
+}));
 
-// Catch-all route to serve index.html for SPA routing
-app.get('*', (req, res) => {
+// Route handler for HTML pages without extensions
+app.get('/:page', (req, res) => {
+  const filePath = path.join(__dirname, '../frontend', req.params.page + '.html');
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      // If file doesn't exist, send index.html
+      res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    }
+  });
+});
+
+// Catch-all for root and undefined routes
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
