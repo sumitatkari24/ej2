@@ -213,3 +213,72 @@ async function cancelBooking(bookingId) {
     console.error('Error cancelling booking:', error);
   }
 }
+
+// Notification Modal Functions
+document.addEventListener('DOMContentLoaded', () => {
+  const notificationBtn = document.getElementById('notificationBtn');
+  const profileBtn = document.getElementById('profileBtn');
+  
+  if (notificationBtn) {
+    notificationBtn.addEventListener('click', openNotificationModal);
+  }
+  if (profileBtn) {
+    profileBtn.addEventListener('click', openProfileModal);
+  }
+
+  // Close modals when clicking outside
+  document.getElementById('notificationModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'notificationModal') closeNotificationModal();
+  });
+  document.getElementById('profileModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'profileModal') closeProfileModal();
+  });
+}, { once: true });
+
+function openNotificationModal() {
+  const modal = document.getElementById('notificationModal');
+  modal.classList.remove('hidden');
+  
+  const notificationList = document.getElementById('notificationList');
+  const user = JSON.parse(localStorage.getItem('user'));
+  
+  // Load notifications (for now, show booking updates)
+  const bookings = dashboard.bookings || [];
+  if (bookings.length === 0) {
+    notificationList.innerHTML = '<p class="text-gray-500 text-center py-8">No notifications yet</p>';
+    return;
+  }
+  
+  notificationList.innerHTML = bookings.map(booking => `
+    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+      <p class="font-semibold text-gray-800">${booking.tripId?.title || 'Trip Update'}</p>
+      <p class="text-sm text-gray-600">Status: <span class="font-medium capitalize">${booking.status}</span></p>
+      <p class="text-xs text-gray-500 mt-1">${new Date(booking.bookingDate).toLocaleDateString()}</p>
+    </div>
+  `).join('');
+}
+
+function closeNotificationModal() {
+  document.getElementById('notificationModal').classList.add('hidden');
+}
+
+function openProfileModal() {
+  const modal = document.getElementById('profileModal');
+  modal.classList.remove('hidden');
+  
+  const user = JSON.parse(localStorage.getItem('user'));
+  document.getElementById('profileName').innerText = user.name || 'User';
+  document.getElementById('profileEmail').innerText = user.email || 'N/A';
+  document.getElementById('profileRole').innerText = `Role: ${user.role || 'user'}`;
+  document.getElementById('profileBookings').innerText = dashboard.totalBookings || 0;
+  document.getElementById('profileJoined').innerText = new Date(user.createdAt || Date.now()).toLocaleDateString();
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').classList.add('hidden');
+}
+
+function logoutFromProfile() {
+  closeProfileModal();
+  logout();
+}
