@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
       });
     }
     
-    const userExists = await User.findOne({ email }).timeout(5000);
+    const userExists = await User.findOne({ email });
     
     if (userExists) {
       console.log('User already exists:', email);
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
   try {
     console.log('Login attempt for:', email);
     
-    const user = await User.findOne({ email }).timeout(5000);
+    const user = await User.findOne({ email });
     
     if (!user) {
       console.log('User not found:', email);
