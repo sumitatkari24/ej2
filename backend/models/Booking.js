@@ -22,9 +22,21 @@ const bookingSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid'],
+    enum: ['pending', 'paid', 'failed'],
     default: 'pending'
-  }
+  },
+  paid: {
+    type: Boolean,
+    default: false
+  },
+  paymentId: String,
+  paymentMethod: {
+    type: String,
+    enum: ['card', 'paypal', 'other'],
+    default: 'card'
+  },
+  paymentDate: Date,
+  amount: Number
 }, {
   timestamps: true
 });

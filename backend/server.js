@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const Trip = require('./models/Trip');
 
 // load env from backend/.env (since server is run from project root)
@@ -133,6 +134,7 @@ async function startServer() {
   app.use('/api/auth', authRoutes);
   app.use('/api/trips', tripRoutes);
   app.use('/api/bookings', bookingRoutes);
+  app.use('/api/payments', paymentRoutes);
 
   // Health check endpoint
   app.get('/api/health', (req, res) => {

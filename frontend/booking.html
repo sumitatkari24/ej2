@@ -25,21 +25,77 @@
         <div class="max-w-5xl mx-auto px-4">
             <div class="max-w-4xl mx-auto bg-white p-5 md:p-10 rounded-3xl shadow-xl border border-gray-100">
                 <h3 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 flex items-center gap-2 md:gap-3"><span class="text-teal-600 text-2xl md:text-3xl">&#x1F4CD;</span> Plan Your New Journey</h3>
-                <form id="bookingForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Select a Trip</label>
-                        <select id="tripSelect" name="tripId" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                            <option value="">Loading trips...</option>
-                        </select>
+                
+                <!-- Step 1: Trip Selection -->
+                <div id="step1" class="block">
+                    <form id="bookingForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Select a Trip</label>
+                            <select id="tripSelect" name="tripId" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                                <option value="">Loading trips...</option>
+                            </select>
+                        </div>
+                        <div id="tripDetailsPanel" class="hidden md:col-span-2 bg-teal-50 p-4 rounded-2xl border border-teal-200">
+                            <h4 class="font-bold text-gray-800 mb-3">Trip Details</h4>
+                            <div id="tripDetails" class="space-y-2 text-sm text-gray-700"></div>
+                        </div>
+                        <div class="md:col-span-2 pt-4 md:pt-6">
+                            <button type="button" id="proceedToPayment" class="w-full bg-teal-600 text-white p-4 md:p-5 rounded-2xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100 text-sm md:text-base">Proceed to Payment</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Payment Form -->
+                <div id="step2" class="hidden">
+                    <div class="mb-6 p-4 bg-teal-50 rounded-2xl border border-teal-200">
+                        <h4 class="font-bold text-gray-800 mb-3">Booking Summary</h4>
+                        <div id="paymentSummary" class="space-y-2 text-sm"></div>
                     </div>
-                    <div id="tripDetailsPanel" class="hidden md:col-span-2 bg-teal-50 p-4 rounded-2xl border border-teal-200">
-                        <h4 class="font-bold text-gray-800 mb-3">Trip Details</h4>
-                        <div id="tripDetails" class="space-y-2 text-sm text-gray-700"></div>
-                    </div>
-                    <div class="md:col-span-2 pt-4 md:pt-6">
-                        <button type="submit" class="w-full bg-teal-600 text-white p-4 md:p-5 rounded-2xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100 text-sm md:text-base">Book This Trip</button>
-                    </div>
-                </form>
+
+                    <form id="paymentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Payment Method</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                    <input type="radio" name="paymentMethod" value="card" checked class="w-4 h-4 text-teal-600">
+                                    <span class="ml-3 text-sm font-medium text-gray-700">💳 Credit/Debit Card</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                    <input type="radio" name="paymentMethod" value="paypal" class="w-4 h-4 text-teal-600">
+                                    <span class="ml-3 text-sm font-medium text-gray-700">🅿️ PayPal</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="cardFields" class="md:col-span-2">
+                            <h4 class="font-bold text-gray-800 mb-4 mt-6">Card Details</h4>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Cardholder Name</label>
+                                <input type="text" id="cardName" placeholder="John Doe" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Card Number</label>
+                                    <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Expiry Date</label>
+                                    <input type="text" id="cardExpiry" placeholder="MM/YY" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">CVV</label>
+                                <input type="text" id="cardCVV" placeholder="123" class="w-full md:w-1/3 p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">💳 Test card: 4242 4242 4242 4242 | Any future date | Any CVC</p>
+                        </div>
+
+                        <div class="md:col-span-2 pt-4 md:pt-6 flex gap-3">
+                            <button type="button" id="backToTrip" class="flex-1 bg-gray-300 text-gray-800 p-4 md:p-5 rounded-2xl font-bold hover:bg-gray-400 transition text-sm md:text-base">Back</button>
+                            <button type="submit" id="completePayment" class="flex-1 bg-teal-600 text-white p-4 md:p-5 rounded-2xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100 text-sm md:text-base">Complete Payment</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </main>
