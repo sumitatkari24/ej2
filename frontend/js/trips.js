@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function logout() {
+function logout(e) {
+  if (e) e.preventDefault();
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = 'index.html';

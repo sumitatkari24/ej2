@@ -26,16 +26,20 @@
         <div id="navMenu" class="hidden md:flex space-x-3 md:space-x-6 font-medium text-xs md:text-sm lg:text-base">
             <a href="index.html" class="hover:text-teal-300 transition">Home</a>
             <a href="trips.html" class="hover:text-teal-300 transition">Explore</a>
-            <a href="login.html" class="hover:text-teal-300 transition">Login</a>
-            <a href="register.html" class="bg-teal-500 px-3 md:px-4 py-1 md:py-2 rounded-full hover:bg-teal-600 transition shadow-lg text-xs md:text-sm">Sign Up</a>
+            <a id="navDashboard" href="dashboard.html" class="hidden hover:text-teal-300 transition">Dashboard</a>
+            <a id="navLogin" href="login.html" class="hover:text-teal-300 transition">Login</a>
+            <a id="navRegister" href="register.html" class="bg-teal-500 px-3 md:px-4 py-1 md:py-2 rounded-full hover:bg-teal-600 transition shadow-lg text-xs md:text-sm">Sign Up</a>
+            <button id="navLogout" class="hidden bg-red-500 px-3 md:px-4 py-1 md:py-2 rounded-full hover:bg-red-600 transition shadow-lg text-xs md:text-sm">Logout</button>
         </div>
         
         <!-- Mobile Menu (dropdown) -->
         <div id="mobileMenu" class="hidden absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur flex flex-col space-y-3 p-4 md:hidden">
             <a href="index.html" class="hover:text-teal-300 transition">Home</a>
             <a href="trips.html" class="hover:text-teal-300 transition">Explore</a>
-            <a href="login.html" class="hover:text-teal-300 transition">Login</a>
-            <a href="register.html" class="bg-teal-500 px-4 py-2 rounded-full hover:bg-teal-600 transition shadow-lg inline-block w-fit">Sign Up</a>
+            <a id="mobDashboard" href="dashboard.html" class="hidden hover:text-teal-300 transition">Dashboard</a>
+            <a id="mobLogin" href="login.html" class="hover:text-teal-300 transition">Login</a>
+            <a id="mobRegister" href="register.html" class="bg-teal-500 px-4 py-2 rounded-full hover:bg-teal-600 transition shadow-lg inline-block w-fit">Sign Up</a>
+            <button id="mobLogout" class="hidden bg-red-500 px-4 py-2 rounded-full hover:bg-red-600 transition shadow-lg w-fit">Logout</button>
         </div>
     </nav>
 
@@ -46,6 +50,35 @@
         mobileMenuBtn?.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
+
+        // Check if user is logged in and update navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                // Hide login/register, show dashboard/logout
+                document.getElementById('navLogin').classList.add('hidden');
+                document.getElementById('navRegister').classList.add('hidden');
+                document.getElementById('navDashboard').classList.remove('hidden');
+                document.getElementById('navLogout').classList.remove('hidden');
+                
+                document.getElementById('mobLogin').classList.add('hidden');
+                document.getElementById('mobRegister').classList.add('hidden');
+                document.getElementById('mobDashboard').classList.remove('hidden');
+                document.getElementById('mobLogout').classList.remove('hidden');
+                
+                // Add logout listeners
+                document.getElementById('navLogout').addEventListener('click', logout);
+                document.getElementById('mobLogout').addEventListener('click', logout);
+            }
+        });
+
+        function logout(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
     </script>
 
     <!-- Hero Section -->
