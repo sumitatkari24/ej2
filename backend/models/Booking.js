@@ -15,6 +15,10 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  travelDate: {
+    type: Date,
+    required: true
+  },
   status: {
     type: String,
     enum: ['booked', 'cancelled'],

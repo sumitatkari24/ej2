@@ -2,6 +2,7 @@ const API_BASE = '/api';
 
 let allTrips = [];
 let selectedTrip = null;
+let selectedDate = null;
 let currentBooking = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,11 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Trip select change event
   document.getElementById('tripSelect').addEventListener('change', showTripDetails);
 
-  // Proceed to payment button
-  document.getElementById('proceedToPayment').addEventListener('click', proceedToPayment);
+  // Proceed to date button
+  document.getElementById('proceedToDate').addEventListener('click', proceedToDate);
   
-  // Back button
+  // Back button (from date to trip)
   document.getElementById('backToTrip').addEventListener('click', backToTrip);
+
+  // Proceed to payment button (from date to payment)
+  document.getElementById('proceedToPayment').addEventListener('click', proceedToPayment);
 
   // Payment form submit
   document.getElementById('paymentForm').addEventListener('submit', handlePayment);
@@ -91,13 +95,59 @@ function showTripDetails(e) {
   }
 }
 
-function proceedToPayment() {
+function proceedToDate() {
   if (!selectedTrip) {
     alert('Please select a trip first');
     return;
   }
 
-  // Create booking first
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('travelDate').setAttribute('min', today);
+  
+  // Show trip details in date step
+  const dateStepDetails = document.getElementById('dateStepTripDetails');
+  dateStepDetails.innerHTML = `
+    <div><strong>Trip:</strong> ${selectedTrip.title}</div>
+    <div><strong>Destination:</strong> ${selectedTrip.destination}</div>
+    <div><strong>Price:</strong> $${selectedTrip.price}</div>
+    <div><strong>Duration:</strong> ${selectedTrip.duration}</div>
+  `;
+
+  // Switch to date step
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step-date').classList.remove('hidden');
+}
+
+function backToTrip() {
+  // Switch back to trip selection
+  document.getElementById('step-date').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  selectedDate = null;
+  document.getElementById('travelDate').value = '';
+}
+
+function proceedToPayment() {
+  const travelDate = document.getElementById('travelDate').value;
+  
+  if (!travelDate) {
+    alert('Please select a travel date');
+    return;
+  }
+
+  // Validate date is in the future
+  const selectedDateObj = new Date(travelDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (selectedDateObj < today) {
+    alert('Please select a future date');
+    return;
+  }
+
+  selectedDate = travelDate;
+
+  // Create booking with date
   createBooking();
 }
 
@@ -109,7 +159,10 @@ async function createBooking() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
-      body: JSON.stringify({ tripId: selectedTrip._id })
+      body: JSON.stringify({ 
+        tripId: selectedTrip._id,
+        travelDate: selectedDate
+      })
     });
     
     if (!response.ok) {
@@ -124,7 +177,7 @@ async function createBooking() {
     showPaymentSummary();
     
     // Switch to payment step
-    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step-date').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -134,11 +187,20 @@ async function createBooking() {
 
 function showPaymentSummary() {
   const summary = document.getElementById('paymentSummary');
+  const dateObj = new Date(selectedDate);
+  const formattedDate = dateObj.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+  
   summary.innerHTML = `
     <div class="flex justify-between"><span>Trip:</span><strong>${selectedTrip.title}</strong></div>
     <div class="flex justify-between"><span>Destination:</span><strong>${selectedTrip.destination}</strong></div>
     <div class="flex justify-between"><span>Duration:</span><strong>${selectedTrip.duration}</strong></div>
-    <div class border-t border-teal-300 pt-2 mt-2 flex justify-between text-base font-bold text-teal-600">
+    <div class="flex justify-between"><span>Travel Date:</span><strong>${formattedDate}</strong></div>
+    <div class="border-t border-teal-300 pt-2 mt-2 flex justify-between text-base font-bold text-teal-600">
       <span>Total Amount:</span>
       <span>$${selectedTrip.price}</span>
     </div>
@@ -160,12 +222,6 @@ function updateCardFields() {
     cardFields.classList.add('hidden');
     upiFields.classList.add('hidden');
   }
-}
-
-function backToTrip() {
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step1').classList.remove('hidden');
-  currentBooking = null;
 }
 
 async function handlePayment(e) {

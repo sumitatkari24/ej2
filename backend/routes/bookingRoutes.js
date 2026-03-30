@@ -6,11 +6,25 @@ const router = express.Router();
 
 // Create booking
 router.post('/', protect, async (req, res) => {
-  const { tripId } = req.body;
+  const { tripId, travelDate } = req.body;
   try {
+    if (!tripId || !travelDate) {
+      return res.status(400).json({ message: 'Trip ID and travel date are required' });
+    }
+
+    // Validate travel date is in the future
+    const dateObj = new Date(travelDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (dateObj < today) {
+      return res.status(400).json({ message: 'Travel date must be in the future' });
+    }
+
     const booking = await Booking.create({
       userId: req.user._id,
-      tripId
+      tripId,
+      travelDate: dateObj
     });
     res.status(201).json(booking);
   } catch (error) {

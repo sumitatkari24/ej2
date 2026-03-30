@@ -66,7 +66,13 @@ function displayBookings(bookings) {
   bookings.forEach(booking => {
     const card = document.createElement('div');
     card.className = 'bg-white p-6 rounded-2xl shadow-sm border border-gray-100';
-    const dateText = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : 'N/A';
+    const bookingDate = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : 'N/A';
+    const travelDate = booking.travelDate ? new Date(booking.travelDate).toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }) : 'N/A';
     const price = booking.tripId?.price || 0;
     dashboard.totalTrips += 1;
     dashboard.revenue += price;
@@ -76,7 +82,9 @@ function displayBookings(bookings) {
         <div>
           <h4 class="text-lg font-semibold">${booking.tripId?.title || 'Untitled Trip'}</h4>
           <p class="text-sm text-gray-500">${booking.tripId?.destination || ''}</p>
-          <p class="text-sm text-gray-500">Booked on ${dateText}</p>
+          <p class="text-xs text-gray-400 mt-2">📅 Travel Date: <strong>${travelDate}</strong></p>
+          <p class="text-xs text-gray-400">🗓️ Booked on: ${bookingDate}</p>
+          <p class="text-xs text-gray-400 mt-1">💳 Payment: <strong>${booking.paid ? '✅ Paid' : '⏳ Pending'}</strong></p>
         </div>
         <span class="text-sm font-medium px-3 py-1 rounded-full ${booking.status === 'cancelled' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${booking.status}</span>
       </div>
@@ -106,11 +114,19 @@ function updateNextTrip(bookings) {
     return;
   }
 
-  const sorted = active.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+  // Sort by travel date instead of booking date
+  const sorted = active.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
   const next = sorted[0];
+  
+  const travelDate = next.travelDate ? new Date(next.travelDate).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }) : 'TBD';
 
   document.getElementById('nextTripTitle').innerText = next.tripId?.title || 'Upcoming Trip';
-  document.getElementById('nextTripDate').innerText = `Booked for ${new Date(next.bookingDate).toLocaleDateString()}`;
+  document.getElementById('nextTripDate').innerText = `Departing on ${travelDate}`;
 }
 
 async function fetchTripsForAdmin() {
