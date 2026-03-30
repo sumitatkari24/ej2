@@ -23,15 +23,15 @@ async function handleRegister(e) {
   const originalText = submitBtn.textContent;
 
   if (!name || !email || !password) {
-    alert('❌ Please fill in all fields');
+    alert('Please fill in all fields');
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = '⏳ Creating Account...';
+  submitBtn.textContent = 'Creating Account...';
 
   try {
-    console.log('📝 Registering:', email);
+    console.log('Registering:', email);
     
     const response = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
@@ -41,11 +41,10 @@ async function handleRegister(e) {
       body: JSON.stringify({ name, email, password })
     });
 
-    console.log('Response status:', response.status);
     const data = await response.json();
 
     if (response.ok && data.token) {
-      console.log('✅ Registration successful');
+      console.log('Registration successful');
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data));
       window.location.href = '/dashboard';
@@ -53,13 +52,13 @@ async function handleRegister(e) {
       console.error('Registration failed:', data.message);
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
-      alert('❌ ' + (data.message || 'Registration failed'));
+      alert(data.message || 'Registration failed');
     }
   } catch (error) {
     console.error('Register error:', error);
     submitBtn.disabled = false;
     submitBtn.textContent = originalText;
-    alert('❌ Error: ' + error.message);
+    alert('Error: ' + error.message);
   }
 }
 
@@ -72,15 +71,15 @@ async function handleLogin(e) {
   const originalText = submitBtn.textContent;
 
   if (!email || !password) {
-    alert('❌ Please fill in all fields');
+    alert('Please fill in all fields');
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = '⏳ Signing In...';
+  submitBtn.textContent = 'Signing In...';
 
   try {
-    console.log('🔑 Logging in:', email);
+    console.log('Attempting login with:', email);
     
     const response = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
@@ -90,11 +89,10 @@ async function handleLogin(e) {
       body: JSON.stringify({ email, password })
     });
 
-    console.log('Response status:', response.status);
     const data = await response.json();
 
     if (response.ok && data.token) {
-      console.log('✅ Login successful');
+      console.log('Login successful');
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data));
       window.location.href = '/dashboard';
@@ -102,12 +100,12 @@ async function handleLogin(e) {
       console.error('Login failed:', data.message);
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
-      alert('❌ ' + (data.message || 'Login failed'));
+      alert(data.message || 'Login failed');
     }
   } catch (error) {
     console.error('Login error:', error);
     submitBtn.disabled = false;
     submitBtn.textContent = originalText;
-    alert('❌ Error: ' + error.message);
+    alert('Error: ' + error.message);
   }
 }
