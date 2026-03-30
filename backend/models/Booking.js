@@ -32,7 +32,7 @@ const bookingSchema = new mongoose.Schema({
   paymentId: String,
   paymentMethod: {
     type: String,
-    enum: ['card', 'paypal', 'other'],
+    enum: ['card', 'upi', 'paypal', 'other'],
     default: 'card'
   },
   paymentDate: Date,

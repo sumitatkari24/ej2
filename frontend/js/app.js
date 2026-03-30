@@ -31,16 +31,18 @@ function searchTrips(query) {
 function displayTrips(trips) {
   const tripsDiv = document.getElementById('trips');
   tripsDiv.innerHTML = '';
-  const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23e0e0e0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="24" font-family="Arial"%3EImage Not Available%3C/text%3E%3C/svg%3E';
+  
+  // Enhanced fallback SVG image with gradient
+  const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Cdefs%3E%3ClinearGradient id="grad1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%2314b8a6;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%230d9488;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad1)" width="400" height="300"/%3E%3Ctext x="50%25" y="40%25" text-anchor="middle" fill="white" font-size="48" font-family="Arial"%3E✈️%3C/text%3E%3Ctext x="50%25" y="65%25" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-family="Arial"%3EImage Loading...%3C/text%3E%3C/svg%3E';
   
   trips.forEach(trip => {
     const tripCard = `
       <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 trip-card cursor-pointer">
         <div class="relative h-48 overflow-hidden bg-gray-200">
-          <img src="${trip.imageUrl}" 
+          <img src="${trip.imageUrl || fallbackImage}" 
                alt="${trip.title}" 
-               class="w-full h-full object-cover" 
-               onerror="this.src='${fallbackImage}'"
+               class="w-full h-full object-cover transition duration-500" 
+               onerror="this.src='${fallbackImage}'; this.classList.add('error-image');"
                loading="lazy">
         </div>
         <div class="p-5">

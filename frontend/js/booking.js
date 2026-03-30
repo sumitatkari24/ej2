@@ -148,10 +148,17 @@ function showPaymentSummary() {
 function updateCardFields() {
   const method = document.querySelector('input[name="paymentMethod"]:checked').value;
   const cardFields = document.getElementById('cardFields');
+  const upiFields = document.getElementById('upiFields');
+  
   if (method === 'card') {
     cardFields.classList.remove('hidden');
+    upiFields.classList.add('hidden');
+  } else if (method === 'upi') {
+    cardFields.classList.add('hidden');
+    upiFields.classList.remove('hidden');
   } else {
     cardFields.classList.add('hidden');
+    upiFields.classList.add('hidden');
   }
 }
 
@@ -171,7 +178,7 @@ async function handlePayment(e) {
 
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
   
-  // Basic card validation
+  // Validate based on payment method
   if (paymentMethod === 'card') {
     const cardName = document.getElementById('cardName').value;
     const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
@@ -183,13 +190,25 @@ async function handlePayment(e) {
       return;
     }
 
-    // Simple validation
     if (cardNumber.length < 13 || cardNumber.length > 19) {
       alert('Invalid card number');
       return;
     }
     if (cardCVV.length !== 3 && cardCVV.length !== 4) {
       alert('Invalid CVV');
+      return;
+    }
+  } else if (paymentMethod === 'upi') {
+    const upiId = document.getElementById('upiId').value;
+    
+    if (!upiId) {
+      alert('Please enter UPI ID');
+      return;
+    }
+    
+    // Validate UPI format (simple validation)
+    if (!upiId.includes('@')) {
+      alert('Invalid UPI ID format. Use format like: name@upi');
       return;
     }
   }
