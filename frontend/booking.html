@@ -27,33 +27,17 @@
                 <h3 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 flex items-center gap-2 md:gap-3"><span class="text-teal-600 text-2xl md:text-3xl">&#x1F4CD;</span> Plan Your New Journey</h3>
                 <form id="bookingForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                     <div class="md:col-span-2">
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Trip ID <span class="text-xs text-gray-400">(enter existing trip ID from Explore)</span></label>
-                        <input id="tripId" name="tripId" type="text" placeholder="Trip ID" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Trip Title</label>
-                        <input name="title" type="text" placeholder="e.g. Summer in Italy" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Destination</label>
-                        <select id="destinationSelect" name="destination" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                            <option value="">Select Country</option>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Select a Trip</label>
+                        <select id="tripSelect" name="tripId" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                            <option value="">Loading trips...</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Travel Date</label>
-                        <input name="date" type="date" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Estimated Budget ($)</label>
-                        <input name="budget" type="number" placeholder="2500" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2">Number of Travelers</label>
-                        <input name="travelers" type="number" value="1" min="1" class="w-full p-3 md:p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500" required>
+                    <div id="tripDetailsPanel" class="hidden md:col-span-2 bg-teal-50 p-4 rounded-2xl border border-teal-200">
+                        <h4 class="font-bold text-gray-800 mb-3">Trip Details</h4>
+                        <div id="tripDetails" class="space-y-2 text-sm text-gray-700"></div>
                     </div>
                     <div class="md:col-span-2 pt-4 md:pt-6">
-                        <button type="submit" class="w-full bg-teal-600 text-white p-4 md:p-5 rounded-2xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100 text-sm md:text-base">Create Trip Itinerary and Book</button>
+                        <button type="submit" class="w-full bg-teal-600 text-white p-4 md:p-5 rounded-2xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-100 text-sm md:text-base">Book This Trip</button>
                     </div>
                 </form>
             </div>
