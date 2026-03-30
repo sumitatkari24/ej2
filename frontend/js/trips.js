@@ -59,36 +59,22 @@ function displayTrips(trips) {
     return;
   }
 
-  // Create SVG fallback image
-  const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400"%3E%3Cdefs%3E%3ClinearGradient id="grad1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%2314b8a6;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%230d9488;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad1)" width="600" height="400"/%3E%3Ctext x="50%25" y="40%25" text-anchor="middle" fill="white" font-size="72" font-family="Arial"%3E✈️%3C/text%3E%3Ctext x="50%25" y="70%25" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="20" font-family="Arial" font-weight="bold"%3ETravel Adventure%3C/text%3E%3C/svg%3E';
-
+  // Display cards with placeholder images first
   trips.forEach(trip => {
     const status = trip.status || 'Available';
     const card = document.createElement('div');
     card.className = 'bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 group cursor-pointer hover:shadow-xl transition';
     
-    // Enhanced error handler for images
-    const handleImageError = `
-      if (this.src && !this.src.includes('data:')) {
-        this.src = '${fallbackImage}';
-      }
-    `;
-    
-    // Build img tag with enhanced error handling
-    const imgHtml = `
-      <img 
-        src="${trip.imageUrl || fallbackImage}" 
-        class="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
-        alt="${trip.title}"
-        onerror="${handleImageError}"
-        loading="lazy"
-        crossorigin="anonymous"
-        decoding="async">
-    `;
-    
     card.innerHTML = `
       <div class="relative h-56 overflow-hidden bg-gradient-to-br from-teal-100 to-blue-100">
-        ${imgHtml}
+        <img 
+          id="img-${trip._id}"
+          src="${ImageLoader.fallbackImage}" 
+          class="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+          alt="${trip.title}"
+          data-primary="${trip.imageUrl || ''}"
+          data-fallback="${trip.fallbackUrl || ''}"
+          loading="lazy">
         <span class="absolute top-4 right-4 bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full">${status}</span>
       </div>
       <div class="p-6">
@@ -103,6 +89,32 @@ function displayTrips(trips) {
       </div>
     `;
     tripsDiv.appendChild(card);
+  });
+
+  // Load images asynchronously
+  trips.forEach(trip => {
+    const imgElement = document.getElementById(`img-${trip._id}`);
+    if (imgElement) {
+      const primaryUrl = imgElement.getAttribute('data-primary');
+      const fallbackUrl = imgElement.getAttribute('data-fallback');
+      
+      ImageLoader.loadImage(primaryUrl || ImageLoader.fallbackImage, fallbackUrl || null, 6000)
+        .then(resolvedUrl => {
+          if (imgElement) {
+            imgElement.src = resolvedUrl;
+            imgElement.style.opacity = '0';
+            imgElement.onload = () => {
+              imgElement.style.transition = 'opacity 0.4s ease-in';
+              imgElement.style.opacity = '1';
+            };
+          }
+        })
+        .catch(() => {
+          if (imgElement) {
+            imgElement.src = ImageLoader.fallbackImage;
+          }
+        });
+    }
   });
 }
 
