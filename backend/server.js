@@ -22,7 +22,7 @@ const sampleTrips = [
     price: 1500,
     duration: '5 days',
     description: 'Experience the magic of Paris with guided tours of the Eiffel Tower, Louvre Museum, and charming streets.',
-    imageUrl: 'https://images.unsplash.com/photo-1495788466985-89c0e6a0f9a6?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/1254635/pexels-photo-1254635.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Tokyo Adventure',
@@ -30,7 +30,7 @@ const sampleTrips = [
     price: 2000,
     duration: '7 days',
     description: 'Discover ancient temples, modern technology, and vibrant culture in Tokyo. Includes Mt. Fuji day trip.',
-    imageUrl: 'https://images.unsplash.com/photo-1540959375944-7049f642e9a5?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/1679405/pexels-photo-1679405.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'New York Explorer',
@@ -38,7 +38,7 @@ const sampleTrips = [
     price: 1800,
     duration: '6 days',
     description: 'Explore Times Square, Central Park, Statue of Liberty, and enjoy world-class dining and Broadway shows.',
-    imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Rome Historical Tour',
@@ -46,7 +46,7 @@ const sampleTrips = [
     price: 1600,
     duration: '5 days',
     description: 'Walk through history visiting the Colosseum, Vatican, Roman Forum, and enjoy authentic Italian cuisine.',
-    imageUrl: 'https://images.unsplash.com/photo-1552832860-8bdde8b76a8f?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/2398220/pexels-photo-2398220.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Barcelona Beach & Culture',
@@ -54,7 +54,7 @@ const sampleTrips = [
     price: 1400,
     duration: '5 days',
     description: 'Enjoy beautiful beaches, Sagrada Familia, Park Güell, and vibrant nightlife in Barcelona.',
-    imageUrl: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/3408351/pexels-photo-3408351.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'London Royal Experience',
@@ -62,7 +62,7 @@ const sampleTrips = [
     price: 1700,
     duration: '5 days',
     description: 'Visit Buckingham Palace, Tower Bridge, Big Ben, and explore royal history and museums.',
-    imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/2641886/pexels-photo-2641886.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Dubai Luxury Getaway',
@@ -70,7 +70,7 @@ const sampleTrips = [
     price: 2200,
     duration: '6 days',
     description: 'Experience luxury, desert safari, Burj Khalifa, and world-class shopping in Dubai.',
-    imageUrl: 'https://images.unsplash.com/photo-1512453333346-f8d1655ae898?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/3772622/pexels-photo-3772622.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Singapore Modern Marvel',
@@ -78,7 +78,7 @@ const sampleTrips = [
     price: 1900,
     duration: '4 days',
     description: 'Explore Marina Bay Sands, Gardens by the Bay, and diverse cultural neighborhoods.',
-    imageUrl: 'https://images.unsplash.com/photo-1531912537782-18cdf4e27e0d?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/4558536/pexels-photo-4558536.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Bangkok Thai Experience',
@@ -86,7 +86,7 @@ const sampleTrips = [
     price: 1200,
     duration: '5 days',
     description: 'Discover ancient temples, floating markets, street food, and the vibrant energy of Bangkok.',
-    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/1619728/pexels-photo-1619728.jpeg?auto=compress&cs=tinysrgb&w=600'
   },
   {
     title: 'Sydney Harbor Escape',
@@ -94,7 +94,7 @@ const sampleTrips = [
     price: 2100,
     duration: '6 days',
     description: 'Visit iconic Sydney Opera House and Harbour Bridge, plus beautiful beaches and wildlife.',
-    imageUrl: 'https://images.unsplash.com/photo-1506565520897-7ab210a8e008?auto=format&fit=crop&w=500&q=60'
+    imageUrl: 'https://images.pexels.com/photos/1680140/pexels-photo-1680140.jpeg?auto=compress&cs=tinysrgb&w=600'
   }
 ];
 

@@ -59,13 +59,19 @@ function displayTrips(trips) {
     return;
   }
 
+  const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="300"%3E%3Crect fill="%23e0e0e0" width="500" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="20" font-family="Arial"%3EImage Not Available%3C/text%3E%3C/svg%3E';
+
   trips.forEach(trip => {
     const status = trip.status || 'Available';
     const card = document.createElement('div');
     card.className = 'bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 group cursor-pointer hover:shadow-xl transition';
     card.innerHTML = `
       <div class="relative h-56 overflow-hidden">
-        <img src="${trip.imageUrl || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80'}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${trip.title}">
+        <img src="${trip.imageUrl || fallbackImage}" 
+             class="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+             alt="${trip.title}"
+             onerror="this.src='${fallbackImage}'"
+             loading="lazy">
         <span class="absolute top-4 right-4 bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full">${status}</span>
       </div>
       <div class="p-6">
