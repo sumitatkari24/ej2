@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: trip-management-system
+    env: node
+    buildCommand: cd trip-management-system && npm install
+    startCommand: cd trip-management-system && npm start
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
