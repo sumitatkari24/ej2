@@ -110,19 +110,10 @@ const sampleTrips = [
 
 // Get all trips
 router.get('/', async (req, res) => {
-  try {
-    const trips = await Trip.find({});
-    if (trips.length > 0) {
-      res.json(trips);
-    } else {
-      // Return sample trips if database is empty
-      res.json(sampleTrips);
-    }
-  } catch (error) {
-    // Return sample trips if database connection fails
-    console.log('Database not available, returning sample trips');
-    res.json(sampleTrips);
-  }
+  console.log('GET /api/trips called');
+  // Since MongoDB is not connected, just return sample trips
+  console.log('Returning sample trips, count:', sampleTrips.length);
+  res.json(sampleTrips);
 });
 
 // Create trip (admin only)
@@ -169,4 +160,4 @@ router.delete('/:id', protect, admin, async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, sampleTrips };
