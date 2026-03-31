@@ -6,6 +6,12 @@ const ImageLoader = {
   // Preload image with timeout and fallback
   loadImage: function(primaryUrl, fallbackUrl = null, timeout = 5000) {
     return new Promise((resolve) => {
+      // If no primary URL, use fallback immediately
+      if (!primaryUrl || primaryUrl.trim() === '') {
+        resolve(fallbackUrl || this.fallbackImage);
+        return;
+      }
+
       const img = new Image();
       
       // Set timeout for image loading
@@ -27,12 +33,10 @@ const ImageLoader = {
         if (fallbackUrl && fallbackUrl !== primaryUrl) {
           this.loadImage(fallbackUrl, null, timeout).then(resolve);
         } else {
-          resolve(this.fallbackImage);
-        }
-      };
-      
-      // Set crossorigin and start loading
-      img.crossOrigin = 'anonymous';
+      if (primaryUrl && primaryUrl.startsWith(window.location.origin)) {
+        img.crossOrigin = 'anonymous';
+      }
+
       img.src = primaryUrl;
     });
   },
@@ -44,7 +48,7 @@ const ImageLoader = {
       const url = await this.loadImage(trip.imageUrl, trip.fallbackUrl);
       loadedUrls[trip._id] = url;
     });
-    
+
     await Promise.all(promises);
     return loadedUrls;
   },

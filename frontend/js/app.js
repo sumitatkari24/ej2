@@ -72,17 +72,21 @@ function displayTrips(trips) {
       ImageLoader.loadImage(primaryUrl || ImageLoader.fallbackImage, fallbackUrl || null, 6000)
         .then(resolvedUrl => {
           if (imgElement) {
+            // Set the image source and fade it in
             imgElement.src = resolvedUrl;
             imgElement.style.opacity = '0';
-            imgElement.onload = () => {
-              imgElement.style.transition = 'opacity 0.4s ease-in';
+            imgElement.style.transition = 'opacity 0.4s ease-in';
+            
+            // Use a timeout to ensure the src change has taken effect
+            setTimeout(() => {
               imgElement.style.opacity = '1';
-            };
+            }, 50);
           }
         })
         .catch(() => {
           if (imgElement) {
             imgElement.src = ImageLoader.fallbackImage;
+            imgElement.style.opacity = '1';
           }
         });
     }
