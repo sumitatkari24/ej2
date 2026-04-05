@@ -253,13 +253,17 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
     
     if (!response.ok) {
       const err = await response.json();
-      console.warn('Booking endpoint returned error:', err);
+      console.error('Booking endpoint error:', err);
+      alert('❌ Booking Error: ' + (err.message || 'Failed to create booking'));
       return null;
     }
 
-    return await response.json();
+    const booking = await response.json();
+    console.log('✅ Booking created successfully:', booking);
+    return booking;
   } catch (error) {
     console.error('Error creating booking:', error);
+    alert('❌ Network error while creating booking: ' + error.message);
     return null;
   }
 }
