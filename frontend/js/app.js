@@ -260,3 +260,15 @@ window.showTripDetails = showTripDetails;
 function closeTripDetailsModal() {
   document.getElementById('tripDetailsModal').classList.add('hidden');
 }
+
+async function bookTrip(tripId) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  window.location.href = `booking.html?tripId=${tripId}`;
+}
+
+window.bookTrip = bookTrip;
