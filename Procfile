@@ -1,1 +1,1 @@
-web: cd trip-management-system && npm install && npm start
+web: npm install && npm start
