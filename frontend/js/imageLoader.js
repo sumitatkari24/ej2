@@ -35,6 +35,10 @@ const ImageLoader = {
         if (fallbackUrl && fallbackUrl !== primaryUrl) {
           this.loadImage(fallbackUrl, null, timeout).then(resolve);
         } else {
+          resolve(this.fallbackImage);
+        }
+      };
+
       if (primaryUrl && primaryUrl.startsWith(window.location.origin)) {
         img.crossOrigin = 'anonymous';
       }

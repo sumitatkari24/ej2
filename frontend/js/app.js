@@ -85,8 +85,18 @@ function searchTrips(query) {
 }
 
 function displayTrips(trips) {
+  console.log('Displaying trips:', trips.length, 'trips');
   const tripsDiv = document.getElementById('trips');
+  if (!tripsDiv) {
+    console.error('Trips div not found!');
+    return;
+  }
   tripsDiv.innerHTML = '';
+  
+  if (!trips || trips.length === 0) {
+    tripsDiv.innerHTML = '<div class="col-span-1"><p class="text-gray-500 text-center">No trips found.</p></div>';
+    return;
+  }
   
   // Display cards with placeholder images first
   trips.forEach(trip => {
@@ -109,9 +119,12 @@ function displayTrips(trips) {
             <span class="text-teal-600 font-bold text-lg">$${trip.price}</span>
             <span class="text-xs bg-teal-50 text-teal-600 px-3 py-1 rounded-full">${trip.duration}</span>
           </div>
-          <p class="text-sm text-gray-500 flex items-center gap-1">
+          <p class="text-sm text-gray-500 flex items-center gap-1 mb-4">
             <span>📍</span> ${trip.destination}
           </p>
+          <button onclick="showTripDetails('${trip._id}')" class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-2 px-4 rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105">
+            Book Now
+          </button>
         </div>
       </div>
     `;
@@ -124,25 +137,19 @@ function displayTrips(trips) {
     if (imgElement) {
       const primaryUrl = imgElement.getAttribute('data-primary');
       const fallbackUrl = imgElement.getAttribute('data-fallback');
+      console.log('Loading image for trip:', trip._id, primaryUrl);
       
       ImageLoader.loadImage(primaryUrl || ImageLoader.fallbackImage, fallbackUrl || null, 6000)
         .then(resolvedUrl => {
+          console.log('Image loaded for trip:', trip._id, resolvedUrl);
           if (imgElement) {
-            // Set the image source and fade it in
-            imgElement.src = resolvedUrl;
-            imgElement.style.opacity = '0';
-            imgElement.style.transition = 'opacity 0.4s ease-in';
-            
-            // Use a timeout to ensure the src change has taken effect
-            setTimeout(() => {
-              imgElement.style.opacity = '1';
-            }, 50);
+            ImageLoader.applyImage(imgElement, resolvedUrl, true);
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('Failed to load image for trip:', trip._id, error);
           if (imgElement) {
-            imgElement.src = ImageLoader.fallbackImage;
-            imgElement.style.opacity = '1';
+            ImageLoader.applyImage(imgElement, ImageLoader.fallbackImage, true);
           }
         });
     }
@@ -151,13 +158,15 @@ function displayTrips(trips) {
 
 // Load featured destination images
 function loadFeaturedImages() {
+  console.log('Loading featured images...');
   const featuredImages = [
-    { id: 'featured-img-1', primary: 'https://images.unsplash.com/photo-1509439581779-6298f75bf6e5?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=85' },
-    { id: 'featured-img-2', primary: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=400&fit=crop&q=85' },
-    { id: 'featured-img-3', primary: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&h=400&fit=crop&q=85' }
+    { id: 'featured-img-1', primary: 'https://picsum.photos/800/600?random=101', fallback: 'https://picsum.photos/800/600?random=201' },
+    { id: 'featured-img-2', primary: 'https://picsum.photos/800/600?random=102', fallback: 'https://picsum.photos/800/600?random=202' },
+    { id: 'featured-img-3', primary: 'https://picsum.photos/800/600?random=103', fallback: 'https://picsum.photos/800/600?random=203' }
   ];
 
   featuredImages.forEach(async (imageData) => {
+    console.log('Loading featured image:', imageData.id);
     const imgElement = document.getElementById(imageData.id);
     if (imgElement) {
       // Start with loading image
@@ -166,6 +175,7 @@ function loadFeaturedImages() {
 
       try {
         const resolvedUrl = await ImageLoader.loadImage(imageData.primary, imageData.fallback, 10000);
+        console.log('Featured image loaded:', imageData.id, resolvedUrl);
         if (imgElement && resolvedUrl) {
           ImageLoader.applyImage(imgElement, resolvedUrl, true);
         }
@@ -243,12 +253,15 @@ async function showTripDetails(tripId) {
   // Set up book now button
   document.getElementById('bookFromDetails').onclick = () => {
     closeTripDetailsModal();
-    window.location.href = `booking.html?tripId=${trip._id}`;
+    window.bookTrip(trip._id);
   };
 
   // Show modal
   document.getElementById('tripDetailsModal').classList.remove('hidden');
 }
+
+// Make showTripDetails function globally accessible for onclick handlers
+window.showTripDetails = showTripDetails;
 
 function closeTripDetailsModal() {
   document.getElementById('tripDetailsModal').classList.add('hidden');

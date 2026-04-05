@@ -160,6 +160,9 @@ async function bookTrip(tripId) {
   }
 }
 
+// Make bookTrip function globally accessible for onclick handlers
+window.bookTrip = bookTrip;
+
 function updateUIBasedOnAuth(token) {
   const logoutElements = ['logout', 'logoutSidebar', 'logoutMobile'];
   const bookingElements = ['goBookingPage'];
