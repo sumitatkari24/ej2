@@ -261,7 +261,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Featured Destination 1 -->
-                <div onclick="openFeaturedTrip('France')" class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
                     <img id="featured-img-1"
                          src="https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80"
                          alt="Paris"
@@ -269,32 +269,32 @@
                          class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                          data-primary="https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80"
                          data-fallback="https://picsum.photos/1200/800?random=201" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white relative z-10">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl font-bold hero-font">Paris, France</h4>
-                            <div class="flex items-center space-x-1 text-sm font-semibold text-white">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 flex flex-col justify-end p-6 text-white" onclick="openFeaturedTrip('France')" style="cursor: pointer;">
+                        <h4 class="text-3xl font-bold hero-font mb-2">Paris, France</h4>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
                                 <i class="fas fa-star text-yellow-300"></i>
-                                <span>4.8</span>
+                                <span class="font-semibold text-lg">4.8</span>
                             </div>
+                            <p class="text-sm opacity-90 flex items-center gap-1">
+                                <i class="fas fa-heart text-red-400"></i>
+                                Romance & Culture
+                            </p>
                         </div>
-                        <p class="text-base opacity-90 mb-3 flex items-center gap-2">
-                            <i class="fas fa-heart text-red-400"></i>
-                            Romance & Culture
-                        </p>
-                        <div class="flex flex-wrap items-center gap-4 text-xs opacity-90 mb-4">
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-clock"></i>7 days</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-dollar-sign"></i>From $2,499</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-users"></i>2-6 travelers</span>
+                        <div class="flex flex-wrap gap-3 text-xs opacity-95 mb-4">
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-clock"></i>7 days</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-dollar-sign"></i>From $2,499</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-users"></i>2-6 travelers</span>
                         </div>
-                        <button type="button" onclick="openFeaturedTrip('France')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                        <button type="button" onclick="openFeaturedTrip('France')" class="w-fit bg-white/25 hover:bg-white/35 backdrop-blur-sm px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300">
                             Explore
                         </button>
                     </div>
                 </div>
 
                 <!-- Featured Destination 2 -->
-                <div onclick="openFeaturedTrip('Japan')" class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
                     <img id="featured-img-2"
                          src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80"
                          alt="Tokyo"
@@ -302,32 +302,32 @@
                          class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                          data-primary="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80"
                          data-fallback="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white relative z-10">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl font-bold hero-font">Tokyo, Japan</h4>
-                            <div class="flex items-center space-x-1 text-sm font-semibold text-white">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 flex flex-col justify-end p-6 text-white" onclick="openFeaturedTrip('Japan')" style="cursor: pointer;">
+                        <h4 class="text-3xl font-bold hero-font mb-2">Tokyo, Japan</h4>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
                                 <i class="fas fa-star text-yellow-300"></i>
-                                <span>4.9</span>
+                                <span class="font-semibold text-lg">4.9</span>
                             </div>
+                            <p class="text-sm opacity-90 flex items-center gap-1">
+                                <i class="fas fa-city text-blue-400"></i>
+                                Tradition & Innovation
+                            </p>
                         </div>
-                        <p class="text-base opacity-90 mb-3 flex items-center gap-2">
-                            <i class="fas fa-city text-blue-400"></i>
-                            Tradition & Innovation
-                        </p>
-                        <div class="flex flex-wrap items-center gap-4 text-xs opacity-90 mb-4">
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-clock"></i>10 days</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-dollar-sign"></i>From $3,299</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-users"></i>3-8 travelers</span>
+                        <div class="flex flex-wrap gap-3 text-xs opacity-95 mb-4">
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-clock"></i>10 days</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-dollar-sign"></i>From $3,299</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-users"></i>3-8 travelers</span>
                         </div>
-                        <button type="button" onclick="openFeaturedTrip('Japan')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                        <button type="button" onclick="openFeaturedTrip('Japan')" class="w-fit bg-white/25 hover:bg-white/35 backdrop-blur-sm px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300">
                             Explore
                         </button>
                     </div>
                 </div>
 
                 <!-- Featured Destination 3 -->
-                <div onclick="openFeaturedTrip('Australia')" class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
                     <img id="featured-img-3"
                          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80"
                          alt="Sydney"
@@ -335,25 +335,25 @@
                          class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                          data-primary="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80"
                          data-fallback="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=1200&q=80" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white relative z-10">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-2xl font-bold hero-font">Sydney, Australia</h4>
-                            <div class="flex items-center space-x-1 text-sm font-semibold text-white">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 flex flex-col justify-end p-6 text-white" onclick="openFeaturedTrip('Australia')" style="cursor: pointer;">
+                        <h4 class="text-3xl font-bold hero-font mb-2">Sydney, Australia</h4>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
                                 <i class="fas fa-star text-yellow-300"></i>
-                                <span>4.7</span>
+                                <span class="font-semibold text-lg">4.7</span>
                             </div>
+                            <p class="text-sm opacity-90 flex items-center gap-1">
+                                <i class="fas fa-mountain text-green-400"></i>
+                                Beauty & Adventure
+                            </p>
                         </div>
-                        <p class="text-base opacity-90 mb-3 flex items-center gap-2">
-                            <i class="fas fa-mountain text-green-400"></i>
-                            Beauty & Adventure
-                        </p>
-                        <div class="flex flex-wrap items-center gap-4 text-xs opacity-90 mb-4">
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-clock"></i>8 days</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-dollar-sign"></i>From $2,899</span>
-                            <span class="inline-flex items-center gap-2"><i class="fas fa-users"></i>2-5 travelers</span>
+                        <div class="flex flex-wrap gap-3 text-xs opacity-95 mb-4">
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-clock"></i>8 days</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-dollar-sign"></i>From $2,899</span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-users"></i>2-5 travelers</span>
                         </div>
-                        <button type="button" onclick="openFeaturedTrip('Australia')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                        <button type="button" onclick="openFeaturedTrip('Australia')" class="w-fit bg-white/25 hover:bg-white/35 backdrop-blur-sm px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300">
                             Explore
                         </button>
                     </div>
