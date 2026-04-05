@@ -5,48 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eventura Journeys | Premium Trip Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+        }
         .hero-font { font-family: 'Playfair Display', serif; }
-        .glass { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.25); }
-        .trip-card:hover { transform: translateY(-6px); }
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+        }
     </style>
 </head>
-<body class="bg-gradient-to-b from-slate-100 to-sky-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen overflow-x-hidden">
     <!-- Navbar -->
-    <nav class="fixed w-full z-40 glass py-4 px-4 md:px-8 flex justify-between items-center text-white shadow-lg">
-        <h1 class="text-xl md:text-2xl font-bold tracking-tighter uppercase hero-font">Eventura Journeys</h1>
-        
-        <!-- Mobile Menu Button -->
-        <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">☰</button>
-        
-        <!-- Desktop Menu -->
-        <div id="navMenu" class="hidden md:flex space-x-3 md:space-x-6 font-medium text-xs md:text-sm lg:text-base">
-            <a href="index.html" class="hover:text-teal-300 transition">Home</a>
-            <a href="trips.html" class="hover:text-teal-300 transition">Explore</a>
-            <a id="navDashboard" href="dashboard.html" class="hidden hover:text-teal-300 transition">Dashboard</a>
-            <a id="navLogin" href="login.html" class="hover:text-teal-300 transition">Login</a>
-            <a id="navRegister" href="register.html" class="bg-teal-500 px-3 md:px-4 py-1 md:py-2 rounded-full hover:bg-teal-600 transition shadow-lg text-xs md:text-sm">Sign Up</a>
-            <button id="navLogout" class="hidden bg-red-500 px-3 md:px-4 py-1 md:py-2 rounded-full hover:bg-red-600 transition shadow-lg text-xs md:text-sm">Logout</button>
+    <nav class="fixed w-full z-50 glass py-4 px-4 md:px-8 flex justify-between items-center text-white shadow-2xl animate-fade-in">
+        <div class="flex items-center space-x-3">
+            <h1 class="text-xl md:text-3xl font-black tracking-tight hero-font text-white drop-shadow-lg">Eventura Journeys</h1>
         </div>
-        
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="md:hidden text-slate-700 hover:text-teal-600 transition-colors text-xl p-2 rounded-lg hover:bg-white/20">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Desktop Menu -->
+        <div id="navMenu" class="hidden md:flex space-x-1 md:space-x-2 font-medium text-sm lg:text-base">
+            <a href="index.html" class="px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-2">
+                <i class="fas fa-home text-xs"></i>
+                <span>Home</span>
+            </a>
+            <a href="trips.html" class="px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-2">
+                <i class="fas fa-search text-xs"></i>
+                <span>Explore</span>
+            </a>
+            <a id="navDashboard" href="dashboard.html" class="hidden px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-2">
+                <i class="fas fa-tachometer-alt text-xs"></i>
+                <span>Dashboard</span>
+            </a>
+            <a id="navLogin" href="login.html" class="px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-2">
+                <i class="fas fa-sign-in-alt text-xs"></i>
+                <span>Login</span>
+            </a>
+            <a id="navRegister" href="register.html" class="bg-gradient-to-r from-teal-500 to-cyan-500 px-4 md:px-6 py-2 rounded-full hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 shadow-lg btn-glow text-sm font-semibold flex items-center space-x-2">
+                <i class="fas fa-user-plus text-xs"></i>
+                <span>Sign Up</span>
+            </a>
+            <button id="navLogout" class="hidden bg-gradient-to-r from-red-500 to-pink-500 px-4 md:px-6 py-2 rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg text-sm font-semibold flex items-center space-x-2">
+                <i class="fas fa-sign-out-alt text-xs"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+
         <!-- Mobile Menu (dropdown) -->
-        <div id="mobileMenu" class="hidden absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur flex flex-col space-y-3 p-4 md:hidden">
-            <a href="index.html" class="hover:text-teal-300 transition">Home</a>
-            <a href="trips.html" class="hover:text-teal-300 transition">Explore</a>
-            <a id="mobDashboard" href="dashboard.html" class="hidden hover:text-teal-300 transition">Dashboard</a>
-            <a id="mobLogin" href="login.html" class="hover:text-teal-300 transition">Login</a>
-            <a id="mobRegister" href="register.html" class="bg-teal-500 px-4 py-2 rounded-full hover:bg-teal-600 transition shadow-lg inline-block w-fit">Sign Up</a>
-            <button id="mobLogout" class="hidden bg-red-500 px-4 py-2 rounded-full hover:bg-red-600 transition shadow-lg w-fit">Logout</button>
+        <div id="mobileMenu" class="hidden absolute top-20 left-4 right-4 glass-dark rounded-2xl flex flex-col space-y-1 p-4 md:hidden shadow-2xl">
+            <a href="index.html" class="px-4 py-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-3 text-white">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="trips.html" class="px-4 py-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-3 text-white">
+                <i class="fas fa-search"></i>
+                <span>Explore</span>
+            </a>
+            <a id="mobDashboard" href="dashboard.html" class="hidden px-4 py-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-3 text-white">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a id="mobLogin" href="login.html" class="px-4 py-3 rounded-xl hover:bg-white/20 transition-all duration-300 hover:text-teal-300 flex items-center space-x-3 text-white">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+            </a>
+            <a id="mobRegister" href="register.html" class="bg-gradient-to-r from-teal-500 to-cyan-500 px-4 py-3 rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 shadow-lg text-white font-semibold flex items-center space-x-3">
+                <i class="fas fa-user-plus"></i>
+                <span>Sign Up</span>
+            </a>
+            <button id="mobLogout" class="hidden bg-gradient-to-r from-red-500 to-pink-500 px-4 py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg text-white font-semibold flex items-center space-x-3 w-full text-left">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
         </div>
     </nav>
 
     <script>
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        
+
         mobileMenuBtn?.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
@@ -54,19 +153,19 @@
         // Check if user is logged in and update navbar
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
-            
+
             if (token) {
                 // Hide login/register, show dashboard/logout
                 document.getElementById('navLogin').classList.add('hidden');
                 document.getElementById('navRegister').classList.add('hidden');
                 document.getElementById('navDashboard').classList.remove('hidden');
                 document.getElementById('navLogout').classList.remove('hidden');
-                
+
                 document.getElementById('mobLogin').classList.add('hidden');
                 document.getElementById('mobRegister').classList.add('hidden');
                 document.getElementById('mobDashboard').classList.remove('hidden');
                 document.getElementById('mobLogout').classList.remove('hidden');
-                
+
                 // Add logout listeners
                 document.getElementById('navLogout').addEventListener('click', logout);
                 document.getElementById('mobLogout').addEventListener('click', logout);
@@ -82,29 +181,451 @@
     </script>
 
     <!-- Hero Section -->
-    <section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden pt-24">
-        <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1080&fit=crop&q=80" 
-             class="absolute w-full h-full object-cover" 
-             alt="Hero" 
-             onerror="this.src='https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop&q=80'" 
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-10 w-32 h-32 bg-teal-400/20 rounded-full blur-xl animate-float"></div>
+            <div class="absolute top-40 right-20 w-24 h-24 bg-cyan-400/20 rounded-full blur-xl animate-float" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-40 left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-xl animate-float" style="animation-delay: 4s;"></div>
+        </div>
+
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-indigo-900/80"></div>
+
+        <!-- Hero Image with Parallax Effect -->
+        <img src="https://images.unsplash.com/photo-1518670078129-4c9d3682ba77?auto=format&fit=crop&w=1920&q=80"
+             class="absolute w-full h-full object-cover scale-110"
+             alt="Hero"
+             onerror="this.src='https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1920&q=80'"
              loading="eager" />
-        <div class="absolute inset-0 bg-slate-900/55"></div>
-        <div class="relative z-20 text-center text-white px-4 max-w-6xl">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl hero-font mb-4 leading-tight">Explore the Unseen.</h2>
-            <p class="text-base sm:text-lg md:text-xl mb-8 font-light max-w-3xl mx-auto">Manage your journeys with the world’s most sophisticated trip management platform.</p>
-            <a href="trips.html" class="inline-block bg-white text-teal-700 font-semibold px-8 py-4 rounded-full hover:bg-teal-50 transition shadow-lg">Plan a Trip</a>
+        <div class="relative z-20 text-center text-white px-4 max-w-6xl animate-slide-up">
+            <div class="mb-6">
+                <span class="inline-block px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-sm font-medium mb-4 border border-white/25">
+                    <i class="fas fa-star text-yellow-400 mr-2"></i>Premium Travel Experience
+                </span>
+            </div>
+
+            <h2 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl hero-font mb-6 leading-tight text-white font-black">
+                Explore the <span class="gradient-text bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Unseen.</span>
+            </h2>
+
+            <p class="text-lg sm:text-xl md:text-2xl mb-8 font-light max-w-4xl mx-auto text-slate-100 leading-relaxed">
+                Embark on extraordinary journeys with the world's most sophisticated trip management platform.
+                <span class="hidden sm:inline">Discover hidden gems, create unforgettable memories, and travel with confidence.</span>
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                <a href="trips.html" class="group bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold px-8 py-4 rounded-2xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 shadow-2xl btn-glow transform hover:scale-105 flex items-center space-x-3">
+                    <i class="fas fa-compass group-hover:rotate-12 transition-transform duration-300"></i>
+                    <span>Plan Your Journey</span>
+                </a>
+
+                <a href="#featured" class="group bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-2xl hover:bg-white/20 transition-all duration-300 border border-white/30 flex items-center space-x-3">
+                    <i class="fas fa-chevron-down group-hover:translate-y-1 transition-transform duration-300"></i>
+                    <span>Discover More</span>
+                </a>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-16">
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold mb-2">500+</div>
+                    <div class="text-sm md:text-base opacity-80">Destinations</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold mb-2">10K+</div>
+                    <div class="text-sm md:text-base opacity-80">Happy Travelers</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold mb-2">98%</div>
+                    <div class="text-sm md:text-base opacity-80">Satisfaction</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold mb-2">24/7</div>
+                    <div class="text-sm md:text-base opacity-80">Support</div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Trips Dashboard -->
-    <main class="container mx-auto px-4 py-12 mt-8">
-        <div class="text-center mb-8">
-            <h3 class="text-2xl sm:text-3xl font-bold text-slate-800">Popular Collection</h3>
-            <p class="text-slate-500 mt-2">Browse top destinations curated just for you.</p>
+    <!-- Featured Destinations Section -->
+    <section id="featured" class="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-2 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full mb-4">
+                    <i class="fas fa-map-marked-alt text-teal-600 mr-2"></i>
+                    <span class="text-teal-700 font-medium text-sm">World's Best Destinations</span>
+                </div>
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 hero-font mb-4">Featured Destinations</h3>
+                <p class="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">Discover the world's most enchanting locations, each offering unique experiences and unforgettable memories</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Featured Destination 1 -->
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                    <img id="featured-img-1"
+                         src=""
+                         alt="Paris"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                         data-primary="https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=600&h=400&fit=crop&q=85"
+                         data-fallback="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=85" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-2xl font-bold hero-font">Paris, France</h4>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="text-sm font-medium">4.8</span>
+                            </div>
+                        </div>
+                        <p class="text-base opacity-90 mb-3 flex items-center">
+                            <i class="fas fa-heart text-red-400 mr-2"></i>
+                            Romance & Culture
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm">
+                                <span class="flex items-center"><i class="fas fa-clock mr-1"></i>7 days</span>
+                                <span class="flex items-center"><i class="fas fa-users mr-1"></i>From $2,499</span>
+                            </div>
+                            <button onclick="openFeaturedTrip('France')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                                Explore
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Destination 2 -->
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                    <img id="featured-img-2"
+                         src=""
+                         alt="Tokyo"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                         data-primary="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop&q=85"
+                         data-fallback="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=400&fit=crop&q=85" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-2xl font-bold hero-font">Tokyo, Japan</h4>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="text-sm font-medium">4.9</span>
+                            </div>
+                        </div>
+                        <p class="text-base opacity-90 mb-3 flex items-center">
+                            <i class="fas fa-city text-blue-400 mr-2"></i>
+                            Tradition & Innovation
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm">
+                                <span class="flex items-center"><i class="fas fa-clock mr-1"></i>10 days</span>
+                                <span class="flex items-center"><i class="fas fa-users mr-1"></i>From $3,299</span>
+                            </div>
+                            <button onclick="openFeaturedTrip('Japan')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                                Explore
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Destination 3 -->
+                <div class="relative h-80 rounded-3xl overflow-hidden shadow-2xl group cursor-pointer card-hover transform transition-all duration-500">
+                    <img id="featured-img-3"
+                         src=""
+                         alt="Sydney"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                         data-primary="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=85"
+                         data-fallback="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&h=400&fit=crop&q=85" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-2xl font-bold hero-font">Sydney, Australia</h4>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="text-sm font-medium">4.7</span>
+                            </div>
+                        </div>
+                        <p class="text-base opacity-90 mb-3 flex items-center">
+                            <i class="fas fa-mountain text-green-400 mr-2"></i>
+                            Beauty & Adventure
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm">
+                                <span class="flex items-center"><i class="fas fa-clock mr-1"></i>8 days</span>
+                                <span class="flex items-center"><i class="fas fa-users mr-1"></i>From $2,899</span>
+                            </div>
+                            <button onclick="openFeaturedTrip('Australia')" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium">
+                                Explore
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Details Modal -->
+            <div id="tripDetailsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 px-4 py-8">
+                <div class="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl">
+                    <button id="closeTripDetailsModal" class="absolute top-5 right-5 text-slate-700 hover:text-teal-600 text-2xl z-20">&times;</button>
+                    <div class="md:flex items-stretch">
+                        <div class="md:w-1/2 relative overflow-hidden h-80 md:h-auto">
+                            <img id="tripDetailsImage" src="" alt="Trip details image" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="md:w-1/2 p-8 space-y-5">
+                            <div>
+                                <p class="text-sm uppercase tracking-[0.3em] text-teal-600 font-semibold">Trip Details</p>
+                                <h3 id="tripDetailsTitle" class="text-3xl font-bold text-slate-900 mt-3">Trip Title</h3>
+                                <p id="tripDetailsDestination" class="text-sm text-slate-500 mt-2">Destination</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm text-slate-600">
+                                <div class="bg-slate-100 rounded-2xl p-4">
+                                    <span class="block text-xs uppercase text-slate-400">Duration</span>
+                                    <span id="tripDetailsDuration" class="block mt-2 font-semibold text-slate-800">5 days</span>
+                                </div>
+                                <div class="bg-slate-100 rounded-2xl p-4">
+                                    <span class="block text-xs uppercase text-slate-400">Starting Price</span>
+                                    <span id="tripDetailsPrice" class="block mt-2 font-semibold text-slate-800">$1,500</span>
+                                </div>
+                            </div>
+                            <p id="tripDetailsDescription" class="text-slate-600 leading-relaxed">Trip description goes here.</p>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button id="bookFromDetails" class="w-full bg-teal-600 text-white py-4 rounded-2xl font-semibold hover:bg-teal-700 transition">Book This Trip</button>
+                                <button onclick="closeTripDetailsModal()" class="w-full bg-slate-100 text-slate-700 py-4 rounded-2xl font-semibold hover:bg-slate-200 transition">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Destinations Button -->
+            <div class="text-center mt-12">
+                <a href="trips.html" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-2xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 shadow-xl btn-glow transform hover:scale-105">
+                    <i class="fas fa-globe-americas mr-3"></i>
+                    View All Destinations
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Collection Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full mb-4">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>
+                    <span class="text-indigo-700 font-medium text-sm">Most Popular</span>
+                </div>
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 hero-font mb-4">Popular Collection</h3>
+                <p class="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">Browse our most sought-after destinations, carefully curated by travel experts and loved by thousands of adventurers</p>
+            </div>
+
+            <div id="trips" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-12 hidden">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent mb-4"></div>
+                <p class="text-slate-600">Loading amazing destinations...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 hero-font mb-4">Why Choose Eventura Journeys?</h3>
+                <p class="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto">Experience travel like never before with our premium features and unparalleled service</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-4">Secure & Reliable</h4>
+                    <p class="text-slate-600 leading-relaxed">Your safety and satisfaction are our top priorities. All bookings are protected with comprehensive insurance and 24/7 support.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-magic text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-4">Personalized Experience</h4>
+                    <p class="text-slate-600 leading-relaxed">Get customized recommendations based on your preferences, budget, and travel style for the perfect journey.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-clock text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-4">24/7 Support</h4>
+                    <p class="text-slate-600 leading-relaxed">Our dedicated team is available around the clock to assist you with any questions or concerns during your journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-gradient-to-r from-slate-800 via-blue-900 to-indigo-900 text-white relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 border border-white rounded-full"></div>
+            <div class="absolute top-20 right-20 w-24 h-24 border border-white rounded-full"></div>
+            <div class="absolute bottom-20 left-20 w-40 h-40 border border-white rounded-full"></div>
         </div>
 
-        <div id="trips" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </main>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold hero-font mb-4">What Our Travelers Say</h3>
+                <p class="text-xl opacity-80 max-w-2xl mx-auto">Real experiences from real adventurers who chose Eventura Journeys</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-lg mb-6 italic opacity-90">"Eventura Journeys made our honeymoon in Paris absolutely magical. Every detail was perfect, from the hotel to the private tours. We'll definitely book with them again!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">S</span>
+                        </div>
+                        <div>
+                            <div class="font-bold">Sarah Johnson</div>
+                            <div class="text-sm opacity-70">Paris, France</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-lg mb-6 italic opacity-90">"The Tokyo adventure was incredible! The team's local knowledge and connections made our trip unforgettable. Highly recommend for anyone visiting Japan."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">M</span>
+                        </div>
+                        <div>
+                            <div class="font-bold">Mike Chen</div>
+                            <div class="text-sm opacity-70">Tokyo, Japan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-lg mb-6 italic opacity-90">"Sydney exceeded all our expectations! From the stunning harbor to the amazing wildlife, every moment was perfect. Eventura Journeys truly delivers exceptional experiences."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-indigo-400 to-blue-400 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold">A</span>
+                        </div>
+                        <div>
+                            <div class="font-bold">Anna Rodriguez</div>
+                            <div class="text-sm opacity-70">Sydney, Australia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold hero-font mb-4">Eventura Journeys</h3>
+                    <p class="text-slate-300 mb-6 max-w-md">Your trusted partner for extraordinary travel experiences. We create unforgettable memories and seamless journeys around the world.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-slate-300 hover:text-teal-400 transition-colors">Home</a></li>
+                        <li><a href="trips.html" class="text-slate-300 hover:text-teal-400 transition-colors">Explore Trips</a></li>
+                        <li><a href="dashboard.html" class="text-slate-300 hover:text-teal-400 transition-colors">Dashboard</a></li>
+                        <li><a href="login.html" class="text-slate-300 hover:text-teal-400 transition-colors">Login</a></li>
+                        <li><a href="register.html" class="text-slate-300 hover:text-teal-400 transition-colors">Sign Up</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-teal-400 mr-3"></i>
+                            <span class="text-slate-300">123 Travel Street, Adventure City</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone text-teal-400 mr-3"></i>
+                            <span class="text-slate-300">+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-teal-400 mr-3"></i>
+                            <span class="text-slate-300">hello@eventurajourneys.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock text-teal-400 mr-3"></i>
+                            <span class="text-slate-300">24/7 Support</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-12 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-slate-400 text-sm">&copy; 2024 Eventura Journeys. All rights reserved.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-slate-400 hover:text-teal-400 text-sm transition-colors">Privacy Policy</a>
+                        <a href="#" class="text-slate-400 hover:text-teal-400 text-sm transition-colors">Terms of Service</a>
+                        <a href="#" class="text-slate-400 hover:text-teal-400 text-sm transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="js/imageLoader.js"></script>
     <script src="js/app.js"></script>
