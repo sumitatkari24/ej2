@@ -2,22 +2,29 @@ const API_BASE = '/api';
 
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
-  if (!token) {
-    window.location.href = 'login.html';
-    return;
-  }
-
+  
+  // Only redirect to login if trying to access user-specific features
+  // Allow browsing trips without login
+  
   fetchTrips();
 
   const logoutMain = document.getElementById('logout');
   const logoutSidebar = document.getElementById('logoutSidebar');
+  const logoutMobile = document.getElementById('logoutMobile');
   const goBooking = document.getElementById('goBookingPage');
   const refreshTrips = document.getElementById('refreshTrips');
   const searchInput = document.getElementById('searchInput');
 
   if (logoutMain) logoutMain.addEventListener('click', logout);
   if (logoutSidebar) logoutSidebar.addEventListener('click', logout);
-  if (goBooking) goBooking.addEventListener('click', () => window.location = 'booking.html');
+  if (logoutMobile) logoutMobile.addEventListener('click', logout);
+  if (goBooking) goBooking.addEventListener('click', () => {
+    if (!token) {
+      window.location.href = 'login.html';
+    } else {
+      window.location.href = 'booking.html';
+    }
+  });
   if (refreshTrips) refreshTrips.addEventListener('click', fetchTrips);
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -30,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  
+  // Update UI based on login status
+  updateUIBasedOnAuth(token);
 });
 
 function logout(e) {
@@ -123,21 +133,67 @@ function displayTrips(trips) {
 }
 
 async function bookTrip(tripId) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ tripId })
     });
     if (response.ok) {
       alert('Trip booked successfully');
+      window.location.href = 'dashboard.html';
     } else {
       alert('Error booking trip');
     }
   } catch (error) {
     console.error('Error booking trip:', error);
+    alert('Error booking trip');
   }
+}
+
+function updateUIBasedOnAuth(token) {
+  const logoutElements = ['logout', 'logoutSidebar', 'logoutMobile'];
+  const bookingElements = ['goBookingPage'];
+  
+  if (!token) {
+    // Hide logout buttons
+    logoutElements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    
+    // Change "Plan New Trip" to "Login to Book"
+    bookingElements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = 'Login to Book';
+        el.onclick = () => window.location.href = 'login.html';
+      }
+    });
+  } else {
+    // Show logout buttons
+    logoutElements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = '';
+    });
+    
+    // Keep "Plan New Trip" as is
+    bookingElements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = 'Plan New Trip';
+        el.onclick = () => window.location.href = 'booking.html';
+      }
+    });
+  }
+}
 }

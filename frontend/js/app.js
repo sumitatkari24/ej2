@@ -35,6 +35,21 @@ const DEFAULT_TRIPS = [
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchTrips();
+  loadFeaturedImages();
+  
+  // Set up modal close handlers
+  const closeModalBtn = document.getElementById('closeTripDetailsModal');
+  if (closeModalBtn) {
+    closeModalBtn.onclick = closeTripDetailsModal;
+  }
+  
+  const modal = document.getElementById('tripDetailsModal');
+  if (modal) {
+    modal.onclick = (e) => {
+      if (e.target.id === 'tripDetailsModal') closeTripDetailsModal();
+    };
+  }
+  
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => searchTrips(e.target.value));
@@ -132,4 +147,109 @@ function displayTrips(trips) {
         });
     }
   });
+}
+
+// Load featured destination images
+function loadFeaturedImages() {
+  const featuredImages = [
+    { id: 'featured-img-1', primary: 'https://images.unsplash.com/photo-1509439581779-6298f75bf6e5?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=85' },
+    { id: 'featured-img-2', primary: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=400&fit=crop&q=85' },
+    { id: 'featured-img-3', primary: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=400&fit=crop&q=85', fallback: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&h=400&fit=crop&q=85' }
+  ];
+
+  featuredImages.forEach(async (imageData) => {
+    const imgElement = document.getElementById(imageData.id);
+    if (imgElement) {
+      // Start with loading image
+      imgElement.src = ImageLoader.loadingImage;
+      imgElement.style.opacity = '1';
+
+      try {
+        const resolvedUrl = await ImageLoader.loadImage(imageData.primary, imageData.fallback, 10000);
+        if (imgElement && resolvedUrl) {
+          ImageLoader.applyImage(imgElement, resolvedUrl, true);
+        }
+      } catch (error) {
+        console.error(`Failed to load featured image ${imageData.id}:`, error);
+        if (imgElement) {
+          ImageLoader.applyImage(imgElement, ImageLoader.fallbackImage, true);
+        }
+      }
+    }
+  });
+}
+
+// Trip Details Modal Functions
+function openFeaturedTrip(destination) {
+  if (!window.currentTrips || window.currentTrips.length === 0) {
+    fetchTrips().then(() => {
+      const trip = (window.currentTrips || []).find(t => t.destination.toLowerCase() === destination.toLowerCase());
+      if (trip) {
+        showTripDetails(trip._id);
+      } else {
+        alert('Sorry, this featured destination is not available right now.');
+      }
+    }).catch(() => {
+      alert('Unable to load trips at the moment. Please try again in a few seconds.');
+    });
+    return;
+  }
+
+  const trip = (window.currentTrips || []).find(t => t.destination.toLowerCase() === destination.toLowerCase());
+  if (trip) {
+    showTripDetails(trip._id);
+  } else {
+    alert('Sorry, this featured destination is not available right now.');
+  }
+}
+
+async function showTripDetails(tripId) {
+  if (!window.currentTrips || window.currentTrips.length === 0) {
+    await fetchTrips();
+  }
+
+  const trip = (window.currentTrips || []).find(t => t._id === tripId);
+  if (!trip) {
+    alert('Trip details could not be loaded. Please try again soon.');
+    return;
+  }
+
+  // Populate modal with trip data
+  const imgElement = document.getElementById('tripDetailsImage');
+
+  // Load image with ImageLoader for proper handling
+  imgElement.src = ImageLoader.loadingImage;
+  imgElement.style.opacity = '1';
+
+  ImageLoader.loadImage(trip.imageUrl || ImageLoader.fallbackImage, trip.fallbackUrl || null, 8000)
+    .then(resolvedUrl => {
+      if (imgElement) {
+        ImageLoader.applyImage(imgElement, resolvedUrl, true);
+      }
+    })
+    .catch((error) => {
+      console.error(`Failed to load image for trip details ${trip._id}:`, error);
+      if (imgElement) {
+        ImageLoader.applyImage(imgElement, ImageLoader.fallbackImage, true);
+      }
+    });
+
+  document.getElementById('tripDetailsTitle').textContent = trip.title;
+  document.getElementById('tripDetailsDestination').textContent = trip.destination;
+  document.getElementById('tripDetailsDuration').textContent = trip.duration;
+  document.getElementById('tripDetailsPrice').textContent = `$${trip.price}`;
+  document.getElementById('tripDetailsDescription').textContent = trip.description || 'No description available.';
+
+  // Set up book now button
+  document.getElementById('bookFromDetails').onclick = () => {
+    closeTripDetailsModal();
+    window.location.href = `booking.html?tripId=${trip._id}`;
+  };
+
+  // Show modal
+  document.getElementById('tripDetailsModal').classList.remove('hidden');
+}
+
+function closeTripDetailsModal() {
+  document.getElementById('tripDetailsModal').classList.add('hidden');
 }
