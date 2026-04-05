@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking API Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .log { border: 1px solid #ccc; padding: 10px; margin: 10px 0; background: #f9f9f9; max-height: 400px; overflow-y: auto; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Booking API Test</h1>
+    
+    <div>
+        <h3>Step 1: Get User Info</h3>
+        <button onclick="testGetUser()">Get User Info</button>
+    </div>
+
+    <div>
+        <h3>Step 2: Get Trips</h3>
+        <button onclick="testGetTrips()">Get Trips</button>
+    </div>
+
+    <div>
+        <h3>Step 3: Create Booking</h3>
+        <button onclick="testCreateBooking()">Create Test Booking</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function getToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('❌ No token found in localStorage', 'error');
+                return null;
+            }
+            log('✅ Token found');
+            return token;
+        }
+
+        async function testGetUser() {
+            try {
+                const token = getToken();
+                if (!token) return;
+
+                log('Fetching user info...');
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    log(`❌ Error: ${err.message}`, 'error');
+                    return;
+                }
+
+                const user = await response.json();
+                log(`✅ User: ${user.name || user.email}`, 'success');
+                window.currentUser = user;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetTrips() {
+            try {
+                log('Fetching trips...');
+                const response = await fetch(`${API_BASE}/trips`);
+
+                if (!response.ok) {
+                    log(`❌ Error: ${response.statusText}`, 'error');
+                    return;
+                }
+
+                const trips = await response.json();
+                log(`✅ Found ${trips.length} trips`, 'success');
+                if (trips.length > 0) {
+                    log(`First trip: ${trips[0].title} (ID: ${trips[0]._id})`);
+                    window.firstTrip = trips[0];
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateBooking() {
+            try {
+                const token = getToken();
+                if (!token) return;
+
+                if (!window.currentUser) {
+                    log('❌ No user info. Run "Get User Info" first.', 'error');
+                    return;
+                }
+
+                if (!window.firstTrip) {
+                    log('❌ No trip info. Run "Get Trips" first.', 'error');
+                    return;
+                }
+
+                const pickupDate = new Date();
+                pickupDate.setDate(pickupDate.getDate() + 1);
+
+                const travelDate = new Date();
+                travelDate.setDate(travelDate.getDate() + 3);
+
+                const bookingData = {
+                    tripId: window.firstTrip._id,
+                    pickupDate: pickupDate.toISOString().split('T')[0],
+                    travelDate: travelDate.toISOString().split('T')[0],
+                    pickupAddress: '123 Main Street, New York, NY',
+                    numTravelers: 1,
+                    totalPrice: window.firstTrip.price,
+                    paymentMethod: 'cash'
+                };
+
+                log('Creating booking with data:', 'info');
+                log(JSON.stringify(bookingData, null, 2));
+
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    log(`❌ Booking Error (${response.status}): ${result.message}`, 'error');
+                    return;
+                }
+
+                log(`✅ Booking Created! ID: ${result._id}`, 'success');
+                window.currentBooking = result;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
