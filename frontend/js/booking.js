@@ -3,7 +3,10 @@ const API_BASE = '/api';
 let allTrips = [];
 let selectedTrip = null;
 let selectedDate = null;
+let pickupAddress = '';
+let numTravelers = 1;
 let currentBooking = null;
+let pendingTripSelection = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
@@ -31,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Proceed to payment button (from date to payment)
   document.getElementById('proceedToPayment').addEventListener('click', proceedToPayment);
 
+  // Back button (from payment to date)
+  const backToDateBtn = document.getElementById('backToDate');
+  if (backToDateBtn) {
+    backToDateBtn.addEventListener('click', backToDate);
+  }
+
   // Payment form submit
   document.getElementById('paymentForm').addEventListener('submit', handlePayment);
 
@@ -38,14 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Pre-select trip if provided in URL
   if (selectedTripId) {
-    // Wait for trips to load, then select the trip
-    setTimeout(() => {
-      const tripSelect = document.getElementById('tripSelect');
-      if (tripSelect && allTrips.length > 0) {
-        tripSelect.value = selectedTripId;
-        showTripDetails();
-      }
-    }, 500);
+    pendingTripSelection = selectedTripId;
   }
 });
 
@@ -76,6 +78,15 @@ async function loadTrips() {
       option.textContent = `${trip.title} - ${trip.destination} ($${trip.price})`;
       tripSelect.appendChild(option);
     });
+
+    if (pendingTripSelection) {
+      const pendingOption = allTrips.find(trip => trip._id === pendingTripSelection);
+      if (pendingOption) {
+        tripSelect.value = pendingTripSelection;
+        showTripDetails();
+      }
+      pendingTripSelection = null;
+    }
   } catch (error) {
     console.error('Error loading trips:', error);
     alert('Error loading trips: ' + error.message);
@@ -147,10 +158,22 @@ function backToTrip() {
   document.getElementById('pickupDate').value = '';
 }
 
+function backToDate() {
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step-date').classList.remove('hidden');
+}
+
 function proceedToPayment() {
+  if (!selectedTrip || !selectedTrip._id) {
+    alert('Please select a trip first');
+    return;
+  }
+
   const pickupDate = document.getElementById('pickupDate').value;
   const travelDate = document.getElementById('travelDate').value;
-  
+  const address = document.getElementById('pickupAddress')?.value.trim() || '';
+  const travelers = document.getElementById('numTravelers')?.value || '1';
+
   if (!pickupDate) {
     alert('Please select a pickup date');
     return;
@@ -161,12 +184,16 @@ function proceedToPayment() {
     return;
   }
 
-  // Validate pickup date is in the future
+  if (!address) {
+    alert('Please enter a pickup address');
+    return;
+  }
+
   const pickupDateObj = new Date(pickupDate);
   const travelDateObj = new Date(travelDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   if (pickupDateObj < today) {
     alert('Pickup date must be in the future');
     return;
@@ -183,40 +210,19 @@ function proceedToPayment() {
   }
 
   selectedDate = travelDate;
-
-  // Show booking details in pickup step
-  const pickupStepDetails = document.getElementById('pickupStepDetails');
-  pickupStepDetails.innerHTML = `
-    <div><strong>Trip:</strong> ${selectedTrip.title}</div>
-    <div><strong>Destination:</strong> ${selectedTrip.destination}</div>
-    <div><strong>Pickup Date:</strong> ${new Date(pickupDate).toLocaleDateString()}</div>
-    <div><strong>Travel Date:</strong> ${new Date(selectedDate).toLocaleDateString()}</div>
-    <div><strong>Price:</strong> $${selectedTrip.price}</div>
-    <div><strong>Duration:</strong> ${selectedTrip.duration}</div>
-  `;
-
-  // Switch to pickup step
-  document.getElementById('step-date').classList.add('hidden');
-  document.getElementById('step-pickup').classList.remove('hidden');
-}
-
-function proceedToPayment() {
-  const address = document.getElementById('pickupAddress').value.trim();
-  const travelers = document.getElementById('numTravelers').value;
-  
-  if (!address) {
-    alert('Please enter a pickup address');
-    return;
-  }
-
   pickupAddress = address;
-  numTravelers = parseInt(travelers);
+  numTravelers = parseInt(travelers, 10);
 
-  // Create booking with all details
   createBooking(pickupDate, pickupAddress, numTravelers);
 }
 
 async function createBooking(pickupDate, pickupAddress, numTravelers) {
+  if (!selectedTrip || !selectedTrip._id) {
+    alert('Selected trip is missing. Please choose a trip again.');
+    console.error('createBooking: selectedTrip missing', selectedTrip);
+    return;
+  }
+
   try {
     const response = await fetch(`${API_BASE}/bookings`, {
       method: 'POST',
@@ -229,8 +235,8 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
         pickupDate: pickupDate,
         travelDate: selectedDate,
         pickupAddress: pickupAddress,
-        numTravelers: parseInt(numTravelers),
-        totalPrice: selectedTrip.price * parseInt(numTravelers),
+        numTravelers: parseInt(numTravelers, 10) || 1,
+        totalPrice: selectedTrip.price * (parseInt(numTravelers, 10) || 1),
         paymentMethod: 'cash'
       })
     });
@@ -247,7 +253,7 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
     showPaymentSummary(pickupDate);
     
     // Switch to payment step
-    document.getElementById('step-pickup').classList.add('hidden');
+    document.getElementById('step-date').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -282,7 +288,7 @@ function showPaymentSummary(pickupDate) {
     <div class="flex justify-between"><span>Travel Date:</span><strong>${formattedTravelDate}</strong></div>
     <div class="border-t border-teal-300 pt-2 mt-2 flex justify-between text-base font-bold text-teal-600">
       <span>Total Amount:</span>
-      <span>$${selectedTrip.price}</span>
+      <span>$${selectedTrip.price * numTravelers}</span>
     </div>
   `;
 }
