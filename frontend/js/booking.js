@@ -7,6 +7,37 @@ let pickupAddress = '';
 let numTravelers = 1;
 let currentBooking = null;
 let pendingTripSelection = null;
+let extraDays = 0;
+
+// Helper Functions for Extra Charges
+function parseTripDays(durationString) {
+  // Parse duration like "5 days" or "5-day" to extract number
+  const match = durationString.match(/\d+/);
+  return match ? parseInt(match[0], 10) : 0;
+}
+
+function calculateExtraCharges(tripData, travelPickupDays, travelerCount) {
+  const tripDays = parseTripDays(tripData.duration);
+  const standardTravelers = tripData.standardTravelers || 2;
+  const pricePerDay = tripData.pricePerDay || 50;
+  const pricePerPerson = tripData.pricePerPerson || 100;
+
+  const calculatedExtraDays = Math.max(0, travelPickupDays - tripDays);
+  const calculatedExtraPersons = Math.max(0, travelerCount - standardTravelers);
+  
+  const extraDaysCharge = calculatedExtraDays * pricePerDay;
+  const extraPersonsCharge = calculatedExtraPersons * pricePerPerson;
+
+  return {
+    tripDays,
+    extraDays: calculatedExtraDays,
+    extraDaysCharge,
+    standardTravelers,
+    extraPersons: calculatedExtraPersons,
+    extraPersonsCharge,
+    totalExtra: extraDaysCharge + extraPersonsCharge
+  };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
@@ -173,6 +204,7 @@ async function proceedToPayment() {
   const travelDate = document.getElementById('travelDate').value;
   const address = document.getElementById('pickupAddress')?.value.trim() || '';
   const travelers = document.getElementById('numTravelers')?.value || '1';
+  const extraDaysInput = document.getElementById('extraDays')?.value || '0';
 
   if (!pickupDate) {
     alert('Please select a pickup date');
@@ -212,12 +244,14 @@ async function proceedToPayment() {
   selectedDate = travelDate;
   pickupAddress = address;
   numTravelers = parseInt(travelers, 10);
+  extraDays = parseInt(extraDaysInput, 10) || 0;
 
   console.log('📝 Proceeding to payment with:');
   console.log('   Trip:', selectedTrip._id);
   console.log('   Pickup Date:', pickupDate);
   console.log('   Travel Date:', travelDate);
   console.log('   Address:', address);
+  console.log('   Extra Days:', extraDays);
 
   const bookingResult = await createBooking(pickupDate, pickupAddress, numTravelers);
   if (!bookingResult || !bookingResult._id) {
@@ -239,13 +273,30 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
     return null;
   }
 
+  // Calculate total days for the trip
+  const pickupDateObj = new Date(pickupDate);
+  const travelDateObj = new Date(selectedDate);
+  const travelDays = Math.ceil((travelDateObj - pickupDateObj) / (1000 * 60 * 60 * 24));
+  
+  // Calculate extra charges
+  const charges = calculateExtraCharges(selectedTrip, travelDays, numTravelers);
+  
+  // Calculate total price
+  const basePrice = selectedTrip.price;
+  const totalPrice = basePrice + charges.extraDaysCharge + charges.extraPersonsCharge;
+
   const bookingPayload = { 
     tripId: selectedTrip._id,
     pickupDate,
     travelDate: selectedDate,
     pickupAddress,
     numTravelers: parseInt(numTravelers, 10) || 1,
-    totalPrice: selectedTrip.price * (parseInt(numTravelers, 10) || 1),
+    basePrice,
+    extraDays: charges.extraDays,
+    extraDaysCharge: charges.extraDaysCharge,
+    extraPersons: charges.extraPersons,
+    extraPersonsCharge: charges.extraPersonsCharge,
+    totalPrice,
     paymentMethod: 'cash'
   };
 
@@ -317,17 +368,43 @@ function showPaymentSummary(pickupDate) {
     day: 'numeric' 
   });
   
-  summary.innerHTML = `
+  // Calculate charges
+  const travelDays = Math.ceil((travelDateObj - pickupDateObj) / (1000 * 60 * 60 * 24));
+  const charges = calculateExtraCharges(selectedTrip, travelDays, numTravelers);
+  
+  const basePrice = selectedTrip.price;
+  const totalPrice = basePrice + charges.extraDaysCharge + charges.extraPersonsCharge;
+  
+  // Build summary with itemized charges
+  let summaryHTML = `
     <div class="flex justify-between"><span>Trip:</span><strong>${selectedTrip.title}</strong></div>
     <div class="flex justify-between"><span>Destination:</span><strong>${selectedTrip.destination}</strong></div>
-    <div class="flex justify-between"><span>Duration:</span><strong>${selectedTrip.duration}</strong></div>
+    <div class="flex justify-between"><span>Duration:</span><strong>${selectedTrip.duration} (${charges.tripDays} days)</strong></div>
     <div class="flex justify-between"><span>Pickup Date:</span><strong>${formattedPickupDate}</strong></div>
     <div class="flex justify-between"><span>Travel Date:</span><strong>${formattedTravelDate}</strong></div>
-    <div class="border-t border-teal-300 pt-2 mt-2 flex justify-between text-base font-bold text-teal-600">
-      <span>Total Amount:</span>
-      <span>$${selectedTrip.price * numTravelers}</span>
+    <div class="flex justify-between"><span>Travelers:</span><strong>${numTravelers} person(s)</strong></div>
+    
+    <div class="border-t border-teal-300 pt-2 mt-2">
+      <h5 class="font-bold text-gray-800 mb-2">💰 Price Breakdown:</h5>
+      <div class="flex justify-between text-sm"><span>Base Price:</span><span>$${basePrice}</span></div>`;
+  
+  if (charges.extraDaysCharge > 0) {
+    summaryHTML += `<div class="flex justify-between text-sm text-orange-600"><span>Extra Days (${charges.extraDays} days × $${selectedTrip.pricePerDay || 50}):</span><span>+$${charges.extraDaysCharge}</span></div>`;
+  }
+  
+  if (charges.extraPersonsCharge > 0) {
+    summaryHTML += `<div class="flex justify-between text-sm text-orange-600"><span>Extra Persons (${charges.extraPersons} person(s) × $${selectedTrip.pricePerPerson || 100}):</span><span>+$${charges.extraPersonsCharge}</span></div>`;
+  }
+  
+  summaryHTML += `
+      <div class="flex justify-between text-base font-bold text-teal-600 mt-2 pt-2 border-t border-teal-200">
+        <span>💳 Total Amount:</span>
+        <span>$${totalPrice}</span>
+      </div>
     </div>
   `;
+  
+  summary.innerHTML = summaryHTML;
 }
 
 async function handlePayment(e) {
@@ -369,7 +446,7 @@ async function handlePayment(e) {
       },
       body: JSON.stringify({
         bookingId: currentBooking._id,
-        amount: selectedTrip.price * currentBooking.numTravelers,
+        amount: currentBooking.totalPrice,
         paymentMethod: 'cash'
       })
     });

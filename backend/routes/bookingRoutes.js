@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Create booking
 router.post('/', protect, async (req, res) => {
-  const { tripId, pickupAddress, pickupDate, travelDate, numTravelers, paymentMethod, totalPrice, cardDetails } = req.body;
+  const { tripId, pickupAddress, pickupDate, travelDate, numTravelers, paymentMethod, totalPrice, basePrice, extraDays, extraDaysCharge, extraPersons, extraPersonsCharge, cardDetails } = req.body;
   try {
     // Log incoming request
     console.log('📝 Booking request received:');
@@ -16,6 +16,8 @@ router.post('/', protect, async (req, res) => {
     console.log('   Pickup Date:', pickupDate);
     console.log('   Travel Date:', travelDate);
     console.log('   Address:', pickupAddress);
+    console.log('   Total Price:', totalPrice);
+    console.log('   Extra Charges - Days:', extraDays, 'Persons:', extraPersons);
 
     // Validate user
     if (!req.user || !req.user._id) {
@@ -81,7 +83,7 @@ router.post('/', protect, async (req, res) => {
       return res.status(404).json({ message: 'Trip not found. Please refresh and select a valid trip.' });
     }
 
-    // Create booking
+    // Create booking with extra charges
     const booking = await Booking.create({
       userId: req.user._id,
       tripId,
@@ -90,12 +92,18 @@ router.post('/', protect, async (req, res) => {
       travelDate: travelDateObj,
       numTravelers: parseInt(numTravelers, 10) || 1,
       paymentMethod: paymentMethod || 'cash',
+      basePrice: basePrice || 0,
+      extraDays: extraDays || 0,
+      extraDaysCharge: extraDaysCharge || 0,
+      extraPersons: extraPersons || 0,
+      extraPersonsCharge: extraPersonsCharge || 0,
       totalPrice: totalPrice || 0,
       status: 'confirmed',
       paymentStatus: 'pending'
     });
     
     console.log('✅ Booking created successfully:', booking._id);
+    console.log('   Extra charges stored - Days:', booking.extraDays, 'Persons:', booking.extraPersons);
     res.status(201).json(booking);
   } catch (error) {
     console.error('❌ Booking creation error:', error.message);

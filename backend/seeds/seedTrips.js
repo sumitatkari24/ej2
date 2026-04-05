@@ -12,7 +12,10 @@ const sampleTrips = [
     duration: '5 days',
     description: 'Experience the magic of Paris with guided tours of the Eiffel Tower, Louvre Museum, and charming streets.',
     imageUrl: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1502602898657-fa9d91a5aacc?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1502602898657-fa9d91a5aacc?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 50,
+    pricePerPerson: 100
   },
   {
     title: 'Tokyo Adventure',
@@ -21,7 +24,10 @@ const sampleTrips = [
     duration: '7 days',
     description: 'Discover ancient temples, modern technology, and vibrant culture in Tokyo. Includes Mt. Fuji day trip.',
     imageUrl: 'https://images.unsplash.com/photo-1528127269029-c0608229c5a8?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1540959375944-7049f642e9b4?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1540959375944-7049f642e9b4?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 60,
+    pricePerPerson: 120
   },
   {
     title: 'New York Explorer',
@@ -30,7 +36,10 @@ const sampleTrips = [
     duration: '6 days',
     description: 'Explore Times Square, Central Park, Statue of Liberty, and enjoy world-class dining and Broadway shows.',
     imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1460872328235-98def848f5d9?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1460872328235-98def848f5d9?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 55,
+    pricePerPerson: 110
   },
   {
     title: 'Rome Historical Tour',
@@ -39,7 +48,10 @@ const sampleTrips = [
     duration: '5 days',
     description: 'Walk through history visiting the Colosseum, Vatican, Roman Forum, and enjoy authentic Italian cuisine.',
     imageUrl: 'https://images.unsplash.com/photo-1552326881-5faf2d9c46e7?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1552832860-f8f59aadde34?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1552832860-f8f59aadde34?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 50,
+    pricePerPerson: 100
   },
   {
     title: 'Barcelona Beach & Culture',
@@ -48,7 +60,10 @@ const sampleTrips = [
     duration: '5 days',
     description: 'Enjoy beautiful beaches, Sagrada Familia, Park Güell, and vibrant nightlife in Barcelona.',
     imageUrl: 'https://images.unsplash.com/photo-1561883088-039b36bb7812?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1583390334519-150acf02583e?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1583390334519-150acf02583e?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 50,
+    pricePerPerson: 100
   },
   {
     title: 'London Royal Experience',
@@ -57,7 +72,10 @@ const sampleTrips = [
     duration: '5 days',
     description: 'Visit Buckingham Palace, Tower Bridge, Big Ben, and explore royal history and museums.',
     imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 50,
+    pricePerPerson: 100
   },
   {
     title: 'Dubai Luxury Getaway',
@@ -66,7 +84,10 @@ const sampleTrips = [
     duration: '6 days',
     description: 'Experience luxury, desert safari, Burj Khalifa, and world-class shopping in Dubai.',
     imageUrl: 'https://images.unsplash.com/photo-1512188553558-430dfe6d20b4?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1512453909227-1aa32ffb1042?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1512453909227-1aa32ffb1042?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 70,
+    pricePerPerson: 150
   },
   {
     title: 'Singapore Modern Marvel',
@@ -75,7 +96,10 @@ const sampleTrips = [
     duration: '4 days',
     description: 'Explore Marina Bay Sands, Gardens by the Bay, and diverse cultural neighborhoods in Singapore.',
     imageUrl: 'https://images.unsplash.com/photo-1512688401262-33631a27e856?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1520763185298-1b434c919abe?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1520763185298-1b434c919abe?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 60,
+    pricePerPerson: 120
   },
   {
     title: 'Bangkok Thai Experience',
@@ -84,7 +108,10 @@ const sampleTrips = [
     duration: '5 days',
     description: 'Discover ancient temples, floating markets, street food, and the vibrant energy of Bangkok.',
     imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1552520206-7600a8ba0e0a?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1552520206-7600a8ba0e0a?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 40,
+    pricePerPerson: 80
   },
   {
     title: 'Sydney Harbor Escape',
@@ -93,7 +120,10 @@ const sampleTrips = [
     duration: '6 days',
     description: 'Visit iconic Sydney Opera House and Harbour Bridge, plus beautiful beaches and wildlife.',
     imageUrl: 'https://images.unsplash.com/photo-1506973404872-a4fa82d67c47?h=400&w=600&fit=crop&q=85',
-    fallbackUrl: 'https://images.unsplash.com/photo-1524239575379-567c9ffa1ff6?h=400&w=600&fit=crop&q=85'
+    fallbackUrl: 'https://images.unsplash.com/photo-1524239575379-567c9ffa1ff6?h=400&w=600&fit=crop&q=85',
+    standardTravelers: 2,
+    pricePerDay: 65,
+    pricePerPerson: 130
   }
 ];
 

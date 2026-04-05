@@ -59,6 +59,30 @@ const bookingSchema = new mongoose.Schema({
   totalPrice: {
     type: Number,
     required: true
+  },
+  basePrice: {
+    type: Number,
+    description: 'Trip base price'
+  },
+  extraDays: {
+    type: Number,
+    default: 0,
+    description: 'Number of additional days beyond trip duration'
+  },
+  extraDaysCharge: {
+    type: Number,
+    default: 0,
+    description: 'Additional charge for extra days'
+  },
+  extraPersons: {
+    type: Number,
+    default: 0,
+    description: 'Number of additional travelers beyond standard'
+  },
+  extraPersonsCharge: {
+    type: Number,
+    default: 0,
+    description: 'Additional charge for extra persons'
   }
 }, {
   timestamps: true
