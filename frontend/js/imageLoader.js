@@ -61,20 +61,26 @@ const ImageLoader = {
 
   // Apply loaded image to element with smooth transition
   applyImage: function(img, url, fadeIn = true) {
-    if (img && url) {
-      if (fadeIn) {
-        img.style.opacity = '0';
-        img.style.transition = 'opacity 0.4s ease-in';
-      }
+    if (!img || !url) return;
 
-      img.src = url;
-
-      if (fadeIn) {
-        // Use a timeout to ensure the src change has taken effect
-        setTimeout(() => {
-          img.style.opacity = '1';
-        }, 50);
+    img.onerror = () => {
+      img.onerror = null;
+      if (url !== this.fallbackImage) {
+        img.src = this.fallbackImage;
       }
+    };
+
+    if (fadeIn) {
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.4s ease-in';
+    }
+
+    img.src = url;
+
+    if (fadeIn) {
+      setTimeout(() => {
+        img.style.opacity = '1';
+      }, 50);
     }
   }
 };

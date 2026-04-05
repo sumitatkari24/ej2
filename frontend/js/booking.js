@@ -163,7 +163,7 @@ function backToDate() {
   document.getElementById('step-date').classList.remove('hidden');
 }
 
-function proceedToPayment() {
+async function proceedToPayment() {
   if (!selectedTrip || !selectedTrip._id) {
     alert('Please select a trip first');
     return;
@@ -213,14 +213,24 @@ function proceedToPayment() {
   pickupAddress = address;
   numTravelers = parseInt(travelers, 10);
 
-  createBooking(pickupDate, pickupAddress, numTravelers);
+  const bookingResult = await createBooking(pickupDate, pickupAddress, numTravelers);
+  if (!bookingResult || !bookingResult._id) {
+    alert('Unable to create booking. Please try again.');
+    return;
+  }
+
+  currentBooking = bookingResult;
+
+  showPaymentSummary(pickupDate);
+  document.getElementById('step-date').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
 }
 
 async function createBooking(pickupDate, pickupAddress, numTravelers) {
   if (!selectedTrip || !selectedTrip._id) {
     alert('Selected trip is missing. Please choose a trip again.');
     console.error('createBooking: selectedTrip missing', selectedTrip);
-    return;
+    return null;
   }
 
   try {
@@ -232,9 +242,9 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
       },
       body: JSON.stringify({ 
         tripId: selectedTrip._id,
-        pickupDate: pickupDate,
+        pickupDate,
         travelDate: selectedDate,
-        pickupAddress: pickupAddress,
+        pickupAddress,
         numTravelers: parseInt(numTravelers, 10) || 1,
         totalPrice: selectedTrip.price * (parseInt(numTravelers, 10) || 1),
         paymentMethod: 'cash'
@@ -243,21 +253,14 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
     
     if (!response.ok) {
       const err = await response.json();
-      alert(err.message || 'Error creating booking');
-      return;
+      console.warn('Booking endpoint returned error:', err);
+      return null;
     }
 
-    currentBooking = await response.json();
-    
-    // Show payment summary
-    showPaymentSummary(pickupDate);
-    
-    // Switch to payment step
-    document.getElementById('step-date').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
+    return await response.json();
   } catch (error) {
     console.error('Error creating booking:', error);
-    alert('Error creating booking: ' + error.message);
+    return null;
   }
 }
 
@@ -307,6 +310,23 @@ async function handlePayment(e) {
   submitBtn.textContent = 'Processing Payment...';
 
   try {
+    if (!currentBooking._id) {
+      const bookingResult = await createBooking(
+        currentBooking.pickupDate,
+        currentBooking.pickupAddress,
+        currentBooking.numTravelers
+      );
+
+      if (!bookingResult || !bookingResult._id) {
+        alert('Unable to create booking before payment. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        return;
+      }
+
+      currentBooking = bookingResult;
+    }
+
     const response = await fetch(`${API_BASE}/payments/process-payment`, {
       method: 'POST',
       headers: {

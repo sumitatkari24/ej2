@@ -138,26 +138,9 @@ async function bookTrip(tripId) {
     window.location.href = 'login.html';
     return;
   }
-  
-  try {
-    const response = await fetch(`${API_BASE}/bookings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ tripId })
-    });
-    if (response.ok) {
-      alert('Trip booked successfully');
-      window.location.href = 'dashboard.html';
-    } else {
-      alert('Error booking trip');
-    }
-  } catch (error) {
-    console.error('Error booking trip:', error);
-    alert('Error booking trip');
-  }
+
+  // Send user to the booking flow with the selected trip pre-loaded.
+  window.location.href = `booking.html?tripId=${tripId}`;
 }
 
 // Make bookTrip function globally accessible for onclick handlers
@@ -198,5 +181,4 @@ function updateUIBasedOnAuth(token) {
       }
     });
   }
-}
 }

@@ -159,31 +159,25 @@ function displayTrips(trips) {
 // Load featured destination images
 function loadFeaturedImages() {
   console.log('Loading featured images...');
-  const featuredImages = [
-    { id: 'featured-img-1', primary: 'https://picsum.photos/800/600?random=101', fallback: 'https://picsum.photos/800/600?random=201' },
-    { id: 'featured-img-2', primary: 'https://picsum.photos/800/600?random=102', fallback: 'https://picsum.photos/800/600?random=202' },
-    { id: 'featured-img-3', primary: 'https://picsum.photos/800/600?random=103', fallback: 'https://picsum.photos/800/600?random=203' }
-  ];
 
-  featuredImages.forEach(async (imageData) => {
-    console.log('Loading featured image:', imageData.id);
-    const imgElement = document.getElementById(imageData.id);
-    if (imgElement) {
-      // Start with loading image
-      imgElement.src = ImageLoader.loadingImage;
-      imgElement.style.opacity = '1';
+  const featuredImageTags = document.querySelectorAll('#featured img[data-primary]');
+  featuredImageTags.forEach(async (imgElement) => {
+    const primaryUrl = imgElement.getAttribute('data-primary') || '';
+    const fallbackUrl = imgElement.getAttribute('data-fallback') || ImageLoader.fallbackImage;
 
-      try {
-        const resolvedUrl = await ImageLoader.loadImage(imageData.primary, imageData.fallback, 10000);
-        console.log('Featured image loaded:', imageData.id, resolvedUrl);
-        if (imgElement && resolvedUrl) {
-          ImageLoader.applyImage(imgElement, resolvedUrl, true);
-        }
-      } catch (error) {
-        console.error(`Failed to load featured image ${imageData.id}:`, error);
-        if (imgElement) {
-          ImageLoader.applyImage(imgElement, ImageLoader.fallbackImage, true);
-        }
+    imgElement.src = ImageLoader.loadingImage;
+    imgElement.style.opacity = '1';
+
+    try {
+      const resolvedUrl = await ImageLoader.loadImage(primaryUrl, fallbackUrl, 10000);
+      console.log('Featured image loaded:', imgElement.id, resolvedUrl);
+      if (imgElement && resolvedUrl) {
+        ImageLoader.applyImage(imgElement, resolvedUrl, true);
+      }
+    } catch (error) {
+      console.error(`Failed to load featured image ${imgElement.id}:`, error);
+      if (imgElement) {
+        ImageLoader.applyImage(imgElement, ImageLoader.fallbackImage, true);
       }
     }
   });
