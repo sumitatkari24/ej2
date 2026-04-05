@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Check for trip parameter in URL
   const urlParams = new URLSearchParams(window.location.search);
-  const selectedTripId = urlParams.get('trip');
+  const selectedTripId = urlParams.get('trip') || urlParams.get('tripId');
 
   // Trip select change event
   document.getElementById('tripSelect').addEventListener('change', showTripDetails);

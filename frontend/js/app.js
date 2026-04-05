@@ -1,5 +1,38 @@
 const API_BASE = '/api';
 
+const DEFAULT_TRIPS = [
+  {
+    _id: 'fallback1',
+    title: 'Paris City Escape',
+    destination: 'France',
+    price: 1500,
+    duration: '5 days',
+    description: 'Experience the magic of Paris with guided tours of the Eiffel Tower, Louvre Museum, and charming streets.',
+    imageUrl: 'https://picsum.photos/600/400?random=1',
+    fallbackUrl: 'https://picsum.photos/600/400?random=101'
+  },
+  {
+    _id: 'fallback2',
+    title: 'Tokyo Adventure',
+    destination: 'Japan',
+    price: 2000,
+    duration: '7 days',
+    description: 'Discover ancient temples, modern technology, and vibrant culture in Tokyo. Includes Mt. Fuji day trip.',
+    imageUrl: 'https://picsum.photos/600/400?random=2',
+    fallbackUrl: 'https://picsum.photos/600/400?random=102'
+  },
+  {
+    _id: 'fallback3',
+    title: 'New York Explorer',
+    destination: 'USA',
+    price: 1800,
+    duration: '6 days',
+    description: 'Explore Times Square, Central Park, Statue of Liberty, and enjoy world-class dining and Broadway shows.',
+    imageUrl: 'https://picsum.photos/600/400?random=3',
+    fallbackUrl: 'https://picsum.photos/600/400?random=103'
+  }
+];
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchTrips();
   const searchInput = document.getElementById('searchInput');
@@ -11,11 +44,19 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchTrips() {
   try {
     const response = await fetch(`${API_BASE}/trips`);
+    if (!response.ok) {
+      throw new Error(`Trips API returned ${response.status}`);
+    }
     const trips = await response.json();
+    if (!Array.isArray(trips) || trips.length === 0) {
+      throw new Error('Trips API returned no trips');
+    }
     window.currentTrips = trips;
     displayTrips(trips);
   } catch (error) {
     console.error('Error fetching trips:', error);
+    window.currentTrips = DEFAULT_TRIPS;
+    displayTrips(DEFAULT_TRIPS);
   }
 }
 
