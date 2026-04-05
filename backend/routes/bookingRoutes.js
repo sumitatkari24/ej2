@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -8,14 +9,48 @@ const router = express.Router();
 router.post('/', protect, async (req, res) => {
   const { tripId, pickupAddress, pickupDate, travelDate, numTravelers, paymentMethod, totalPrice, cardDetails } = req.body;
   try {
+    // Log incoming request
+    console.log('📝 Booking request received:');
+    console.log('   User ID:', req.user ? req.user._id : 'NULL');
+    console.log('   Trip ID:', tripId);
+    console.log('   Pickup Date:', pickupDate);
+    console.log('   Travel Date:', travelDate);
+    console.log('   Address:', pickupAddress);
+
+    // Validate user
+    if (!req.user || !req.user._id) {
+      console.error('❌ Auth error: User not found in request');
+      return res.status(401).json({ message: 'User not authenticated. Please login again.' });
+    }
+
     if (!tripId || !pickupDate || !travelDate || !pickupAddress) {
-      console.warn('Booking validation failed:', { tripId, pickupDate, travelDate, pickupAddress });
+      console.warn('❌ Validation failed - Missing fields:', { tripId, pickupDate, travelDate, pickupAddress });
       return res.status(400).json({ message: 'Trip ID, pickup date, travel date, and pickup address are required' });
     }
 
-    // Validate pickup date is in the future
-    const pickupDateObj = new Date(pickupDate);
-    const travelDateObj = new Date(travelDate);
+    // Validate Trip ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(tripId)) {
+      console.error('❌ Invalid Trip ID format:', tripId);
+      console.error('   This appears to be a sample trip ID. Please select a valid trip from the available list.');
+      return res.status(400).json({ 
+        message: 'Invalid trip ID. Please refresh the page and select a valid trip from the list.' 
+      });
+    }
+
+    // Validate and parse dates
+    let pickupDateObj, travelDateObj;
+    try {
+      pickupDateObj = new Date(pickupDate);
+      travelDateObj = new Date(travelDate);
+      
+      if (isNaN(pickupDateObj.getTime()) || isNaN(travelDateObj.getTime())) {
+        throw new Error('Invalid date format');
+      }
+    } catch (dateErr) {
+      console.error('❌ Date parsing error:', dateErr.message);
+      return res.status(400).json({ message: 'Invalid date format. Use YYYY-MM-DD' });
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -31,21 +66,47 @@ router.post('/', protect, async (req, res) => {
       return res.status(400).json({ message: 'Travel date must be after pickup date' });
     }
 
+    // Verify trip exists in database
+    const Trip = require('../models/Trip');
+    let tripExists;
+    try {
+      tripExists = await Trip.findById(tripId);
+    } catch (findErr) {
+      console.error('❌ Trip lookup error:', findErr.message);
+      return res.status(400).json({ message: 'Invalid trip ID. Please select a valid trip.' });
+    }
+
+    if (!tripExists) {
+      console.error('❌ Trip not found in database:', tripId);
+      return res.status(404).json({ message: 'Trip not found. Please refresh and select a valid trip.' });
+    }
+
+    // Create booking
     const booking = await Booking.create({
       userId: req.user._id,
       tripId,
       pickupAddress,
       pickupDate: pickupDateObj,
       travelDate: travelDateObj,
-      numTravelers: numTravelers || 1,
-      paymentMethod: 'cash',
+      numTravelers: parseInt(numTravelers, 10) || 1,
+      paymentMethod: paymentMethod || 'cash',
       totalPrice: totalPrice || 0,
-      status: 'confirmed'
+      status: 'confirmed',
+      paymentStatus: 'pending'
     });
-    console.log('✅ Booking created:', booking._id);
+    
+    console.log('✅ Booking created successfully:', booking._id);
     res.status(201).json(booking);
   } catch (error) {
     console.error('❌ Booking creation error:', error.message);
+    console.error('   Error type:', error.name);
+    console.error('   Stack:', error.stack);
+    
+    // Handle specific MongoDB errors
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid trip ID format. Please select a valid trip from the list.' });
+    }
+    
     res.status(500).json({ message: 'Failed to create booking: ' + error.message });
   }
 });

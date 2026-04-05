@@ -110,10 +110,28 @@ const sampleTrips = [
 
 // Get all trips
 router.get('/', async (req, res) => {
-  console.log('GET /api/trips called');
-  // Since MongoDB is not connected, just return sample trips
-  console.log('Returning sample trips, count:', sampleTrips.length);
-  res.json(sampleTrips);
+  try {
+    console.log('GET /api/trips called');
+    
+    // Try to get trips from database
+    const Trip = require('../models/Trip');
+    const trips = await Trip.find();
+    
+    if (trips && trips.length > 0) {
+      console.log('✅ Returning', trips.length, 'trips from database');
+      return res.json(trips);
+    }
+    
+    // Fallback to sample trips if database is empty
+    console.log('⚠️  No trips in database, returning sample trips');
+    console.log('Sample trips count:', sampleTrips.length);
+    res.json(sampleTrips);
+  } catch (error) {
+    console.error('❌ Error fetching trips:', error.message);
+    // Even on error, return sample trips as fallback
+    console.log('Error occurred, returning sample trips as fallback');
+    res.json(sampleTrips);
+  }
 });
 
 // Create trip (admin only)

@@ -213,9 +213,15 @@ async function proceedToPayment() {
   pickupAddress = address;
   numTravelers = parseInt(travelers, 10);
 
+  console.log('📝 Proceeding to payment with:');
+  console.log('   Trip:', selectedTrip._id);
+  console.log('   Pickup Date:', pickupDate);
+  console.log('   Travel Date:', travelDate);
+  console.log('   Address:', address);
+
   const bookingResult = await createBooking(pickupDate, pickupAddress, numTravelers);
   if (!bookingResult || !bookingResult._id) {
-    alert('Unable to create booking. Please try again.');
+    console.error('Booking failed - result:', bookingResult);
     return;
   }
 
@@ -228,10 +234,24 @@ async function proceedToPayment() {
 
 async function createBooking(pickupDate, pickupAddress, numTravelers) {
   if (!selectedTrip || !selectedTrip._id) {
+    console.error('❌ Selected trip is missing');
     alert('Selected trip is missing. Please choose a trip again.');
-    console.error('createBooking: selectedTrip missing', selectedTrip);
     return null;
   }
+
+  const bookingPayload = { 
+    tripId: selectedTrip._id,
+    pickupDate,
+    travelDate: selectedDate,
+    pickupAddress,
+    numTravelers: parseInt(numTravelers, 10) || 1,
+    totalPrice: selectedTrip.price * (parseInt(numTravelers, 10) || 1),
+    paymentMethod: 'cash'
+  };
+
+  console.log('📤 Sending booking request to /api/bookings');
+  console.log('   Payload:', bookingPayload);
+  console.log('   Token present:', !!localStorage.getItem('token'));
 
   try {
     const response = await fetch(`${API_BASE}/bookings`, {
@@ -240,30 +260,40 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
-      body: JSON.stringify({ 
-        tripId: selectedTrip._id,
-        pickupDate,
-        travelDate: selectedDate,
-        pickupAddress,
-        numTravelers: parseInt(numTravelers, 10) || 1,
-        totalPrice: selectedTrip.price * (parseInt(numTravelers, 10) || 1),
-        paymentMethod: 'cash'
-      })
+      body: JSON.stringify(bookingPayload)
     });
     
+    console.log('📥 Response status:', response.status);
+    const responseText = await response.text();
+    console.log('📥 Response body:', responseText);
+
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch {
+      console.error('❌ Invalid JSON response:', responseText);
+      alert('❌ Server Error: Invalid response from server');
+      return null;
+    }
+    
     if (!response.ok) {
-      const err = await response.json();
-      console.error('Booking endpoint error:', err);
-      alert('❌ Booking Error: ' + (err.message || 'Failed to create booking'));
+      const errorMessage = responseData.message || 'Failed to create booking';
+      console.error('❌ Booking creation failed:', {
+        status: response.status,
+        message: errorMessage,
+        data: responseData
+      });
+      alert('❌ Booking Error: ' + errorMessage);
       return null;
     }
 
-    const booking = await response.json();
-    console.log('✅ Booking created successfully:', booking);
-    return booking;
+    console.log('✅ Booking created successfully:', responseData._id);
+    return responseData;
   } catch (error) {
-    console.error('Error creating booking:', error);
-    alert('❌ Network error while creating booking: ' + error.message);
+    console.error('❌ Network error creating booking:', error);
+    console.error('   Error type:', error.constructor.name);
+    console.error('   Error message:', error.message);
+    alert('❌ Network error: ' + error.message);
     return null;
   }
 }
