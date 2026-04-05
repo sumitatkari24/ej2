@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load trips
   loadTrips();
 
+  // Check for trip parameter in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedTripId = urlParams.get('trip');
+
   // Trip select change event
   document.getElementById('tripSelect').addEventListener('change', showTripDetails);
 
@@ -29,13 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Payment form submit
   document.getElementById('paymentForm').addEventListener('submit', handlePayment);
-  
-  // Payment method change
-  document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-    radio.addEventListener('change', updateCardFields);
-  });
 
   document.getElementById('logout').addEventListener('click', logout);
+
+  // Pre-select trip if provided in URL
+  if (selectedTripId) {
+    // Wait for trips to load, then select the trip
+    setTimeout(() => {
+      const tripSelect = document.getElementById('tripSelect');
+      if (tripSelect && allTrips.length > 0) {
+        tripSelect.value = selectedTripId;
+        showTripDetails();
+      }
+    }, 500);
+  }
 });
 
 function logout(e) {
@@ -72,7 +83,15 @@ async function loadTrips() {
 }
 
 function showTripDetails(e) {
-  const tripId = e.target.value;
+  // Handle both event and direct calls
+  let tripId;
+  if (e && e.target) {
+    tripId = e.target.value;
+  } else {
+    // Direct call - get value from select element
+    tripId = document.getElementById('tripSelect').value;
+  }
+  
   const detailsPanel = document.getElementById('tripDetailsPanel');
   const detailsDiv = document.getElementById('tripDetails');
   
@@ -125,33 +144,79 @@ function backToTrip() {
   document.getElementById('step1').classList.remove('hidden');
   selectedDate = null;
   document.getElementById('travelDate').value = '';
+  document.getElementById('pickupDate').value = '';
 }
 
 function proceedToPayment() {
+  const pickupDate = document.getElementById('pickupDate').value;
   const travelDate = document.getElementById('travelDate').value;
   
+  if (!pickupDate) {
+    alert('Please select a pickup date');
+    return;
+  }
+
   if (!travelDate) {
     alert('Please select a travel date');
     return;
   }
 
-  // Validate date is in the future
-  const selectedDateObj = new Date(travelDate);
+  // Validate pickup date is in the future
+  const pickupDateObj = new Date(pickupDate);
+  const travelDateObj = new Date(travelDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
-  if (selectedDateObj < today) {
-    alert('Please select a future date');
+  if (pickupDateObj < today) {
+    alert('Pickup date must be in the future');
+    return;
+  }
+
+  if (travelDateObj < today) {
+    alert('Travel date must be in the future');
+    return;
+  }
+
+  if (travelDateObj <= pickupDateObj) {
+    alert('Travel date must be after pickup date');
     return;
   }
 
   selectedDate = travelDate;
 
-  // Create booking with date
-  createBooking();
+  // Show booking details in pickup step
+  const pickupStepDetails = document.getElementById('pickupStepDetails');
+  pickupStepDetails.innerHTML = `
+    <div><strong>Trip:</strong> ${selectedTrip.title}</div>
+    <div><strong>Destination:</strong> ${selectedTrip.destination}</div>
+    <div><strong>Pickup Date:</strong> ${new Date(pickupDate).toLocaleDateString()}</div>
+    <div><strong>Travel Date:</strong> ${new Date(selectedDate).toLocaleDateString()}</div>
+    <div><strong>Price:</strong> $${selectedTrip.price}</div>
+    <div><strong>Duration:</strong> ${selectedTrip.duration}</div>
+  `;
+
+  // Switch to pickup step
+  document.getElementById('step-date').classList.add('hidden');
+  document.getElementById('step-pickup').classList.remove('hidden');
 }
 
-async function createBooking() {
+function proceedToPayment() {
+  const address = document.getElementById('pickupAddress').value.trim();
+  const travelers = document.getElementById('numTravelers').value;
+  
+  if (!address) {
+    alert('Please enter a pickup address');
+    return;
+  }
+
+  pickupAddress = address;
+  numTravelers = parseInt(travelers);
+
+  // Create booking with all details
+  createBooking(pickupDate, pickupAddress, numTravelers);
+}
+
+async function createBooking(pickupDate, pickupAddress, numTravelers) {
   try {
     const response = await fetch(`${API_BASE}/bookings`, {
       method: 'POST',
@@ -161,7 +226,12 @@ async function createBooking() {
       },
       body: JSON.stringify({ 
         tripId: selectedTrip._id,
-        travelDate: selectedDate
+        pickupDate: pickupDate,
+        travelDate: selectedDate,
+        pickupAddress: pickupAddress,
+        numTravelers: parseInt(numTravelers),
+        totalPrice: selectedTrip.price * parseInt(numTravelers),
+        paymentMethod: 'cash'
       })
     });
     
@@ -174,10 +244,10 @@ async function createBooking() {
     currentBooking = await response.json();
     
     // Show payment summary
-    showPaymentSummary();
+    showPaymentSummary(pickupDate);
     
     // Switch to payment step
-    document.getElementById('step-date').classList.add('hidden');
+    document.getElementById('step-pickup').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -185,10 +255,19 @@ async function createBooking() {
   }
 }
 
-function showPaymentSummary() {
+function showPaymentSummary(pickupDate) {
   const summary = document.getElementById('paymentSummary');
-  const dateObj = new Date(selectedDate);
-  const formattedDate = dateObj.toLocaleDateString('en-US', { 
+  const pickupDateObj = new Date(pickupDate);
+  const travelDateObj = new Date(selectedDate);
+  
+  const formattedPickupDate = pickupDateObj.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+  
+  const formattedTravelDate = travelDateObj.toLocaleDateString('en-US', { 
     weekday: 'long', 
     year: 'numeric', 
     month: 'long', 
@@ -199,29 +278,13 @@ function showPaymentSummary() {
     <div class="flex justify-between"><span>Trip:</span><strong>${selectedTrip.title}</strong></div>
     <div class="flex justify-between"><span>Destination:</span><strong>${selectedTrip.destination}</strong></div>
     <div class="flex justify-between"><span>Duration:</span><strong>${selectedTrip.duration}</strong></div>
-    <div class="flex justify-between"><span>Travel Date:</span><strong>${formattedDate}</strong></div>
+    <div class="flex justify-between"><span>Pickup Date:</span><strong>${formattedPickupDate}</strong></div>
+    <div class="flex justify-between"><span>Travel Date:</span><strong>${formattedTravelDate}</strong></div>
     <div class="border-t border-teal-300 pt-2 mt-2 flex justify-between text-base font-bold text-teal-600">
       <span>Total Amount:</span>
       <span>$${selectedTrip.price}</span>
     </div>
   `;
-}
-
-function updateCardFields() {
-  const method = document.querySelector('input[name="paymentMethod"]:checked').value;
-  const cardFields = document.getElementById('cardFields');
-  const upiFields = document.getElementById('upiFields');
-  
-  if (method === 'card') {
-    cardFields.classList.remove('hidden');
-    upiFields.classList.add('hidden');
-  } else if (method === 'upi') {
-    cardFields.classList.add('hidden');
-    upiFields.classList.remove('hidden');
-  } else {
-    cardFields.classList.add('hidden');
-    upiFields.classList.add('hidden');
-  }
 }
 
 async function handlePayment(e) {
@@ -230,43 +293,6 @@ async function handlePayment(e) {
   if (!currentBooking) {
     alert('Booking not found');
     return;
-  }
-
-  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-  
-  // Validate based on payment method
-  if (paymentMethod === 'card') {
-    const cardName = document.getElementById('cardName').value;
-    const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-    const cardExpiry = document.getElementById('cardExpiry').value;
-    const cardCVV = document.getElementById('cardCVV').value;
-
-    if (!cardName || !cardNumber || !cardExpiry || !cardCVV) {
-      alert('Please fill in all card fields');
-      return;
-    }
-
-    if (cardNumber.length < 13 || cardNumber.length > 19) {
-      alert('Invalid card number');
-      return;
-    }
-    if (cardCVV.length !== 3 && cardCVV.length !== 4) {
-      alert('Invalid CVV');
-      return;
-    }
-  } else if (paymentMethod === 'upi') {
-    const upiId = document.getElementById('upiId').value;
-    
-    if (!upiId) {
-      alert('Please enter UPI ID');
-      return;
-    }
-    
-    // Validate UPI format (simple validation)
-    if (!upiId.includes('@')) {
-      alert('Invalid UPI ID format. Use format like: name@upi');
-      return;
-    }
   }
 
   const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -283,19 +309,19 @@ async function handlePayment(e) {
       },
       body: JSON.stringify({
         bookingId: currentBooking._id,
-        amount: selectedTrip.price,
-        paymentMethod: paymentMethod
+        amount: selectedTrip.price * currentBooking.numTravelers,
+        paymentMethod: 'cash'
       })
     });
     
     if (response.ok) {
-      alert('✅ Payment successful! Your trip is booked. Redirecting to dashboard...');
+      alert('✅ Booking confirmed! Payment to be collected at pickup. Redirecting to dashboard...');
       setTimeout(() => {
         window.location.href = 'dashboard.html';
       }, 2000);
     } else {
       const err = await response.json();
-      alert('❌ ' + (err.message || 'Payment failed'));
+      alert('❌ ' + (err.message || 'Booking confirmation failed'));
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
     }

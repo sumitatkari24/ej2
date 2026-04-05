@@ -15,32 +15,51 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  pickupDate: {
+    type: Date,
+    required: true
+  },
   travelDate: {
     type: Date,
     required: true
   },
+  pickupAddress: {
+    type: String,
+    required: true
+  },
+  numTravelers: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
   status: {
     type: String,
-    enum: ['booked', 'cancelled'],
-    default: 'booked'
+    enum: ['booked', 'confirmed', 'cancelled'],
+    default: 'confirmed'
   },
   paymentStatus: {
     type: String,
     enum: ['pending', 'paid', 'failed'],
-    default: 'pending'
+    default: 'paid'
   },
   paid: {
     type: Boolean,
-    default: false
+    default: true
   },
   paymentId: String,
   paymentMethod: {
     type: String,
-    enum: ['card', 'upi', 'paypal', 'other'],
-    default: 'card'
+    enum: ['cash'],
+    default: 'cash'
   },
-  paymentDate: Date,
-  amount: Number
+  paymentDate: {
+    type: Date,
+    default: Date.now
+  },
+  totalPrice: {
+    type: Number,
+    required: true
+  }
 }, {
   timestamps: true
 });

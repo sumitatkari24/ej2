@@ -6,25 +6,40 @@ const router = express.Router();
 
 // Create booking
 router.post('/', protect, async (req, res) => {
-  const { tripId, travelDate } = req.body;
+  const { tripId, pickupAddress, pickupDate, travelDate, numTravelers, paymentMethod, totalPrice, cardDetails } = req.body;
   try {
-    if (!tripId || !travelDate) {
-      return res.status(400).json({ message: 'Trip ID and travel date are required' });
+    if (!tripId || !pickupDate || !travelDate || !pickupAddress) {
+      return res.status(400).json({ message: 'Trip ID, pickup date, travel date, and pickup address are required' });
     }
 
-    // Validate travel date is in the future
-    const dateObj = new Date(travelDate);
+    // Validate pickup date is in the future
+    const pickupDateObj = new Date(pickupDate);
+    const travelDateObj = new Date(travelDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    if (dateObj < today) {
+
+    if (pickupDateObj < today) {
+      return res.status(400).json({ message: 'Pickup date must be in the future' });
+    }
+
+    if (travelDateObj < today) {
       return res.status(400).json({ message: 'Travel date must be in the future' });
+    }
+
+    if (travelDateObj <= pickupDateObj) {
+      return res.status(400).json({ message: 'Travel date must be after pickup date' });
     }
 
     const booking = await Booking.create({
       userId: req.user._id,
       tripId,
-      travelDate: dateObj
+      pickupAddress,
+      pickupDate: pickupDateObj,
+      travelDate: travelDateObj,
+      numTravelers: numTravelers || 1,
+      paymentMethod: 'cash',
+      totalPrice,
+      status: 'confirmed'
     });
     res.status(201).json(booking);
   } catch (error) {
