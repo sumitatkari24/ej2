@@ -3,12 +3,16 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const tripRoutes = require('./routes/tripRoutes').router;
 const bookingRoutes = require('./routes/bookingRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const Trip = require('./models/Trip');
+const User = require('./models/User');
+const Booking = require('./models/Booking');
 
 // load env from backend/.env (since server is run from project root)
 dotenv.config({ path: __dirname + '/.env' });
@@ -145,6 +149,68 @@ async function startServer() {
       timestamp: new Date(),
       help: mongoConnected ? null : 'Check MONGO_URI and IP whitelist on MongoDB Atlas'
     });
+  });
+
+  // Comprehensive diagnostic endpoint
+  app.get('/api/diagnose', async (req, res) => {
+    console.log('🔍 Running MongoDB diagnosis...');
+
+    const diagnosis = {
+      timestamp: new Date(),
+      environment: {
+        NODE_ENV: process.env.NODE_ENV || 'not set',
+        MONGO_URI: process.env.MONGO_URI ? 'set (length: ' + process.env.MONGO_URI.length + ')' : 'NOT SET ❌',
+        JWT_SECRET: process.env.JWT_SECRET ? 'set (length: ' + process.env.JWT_SECRET.length + ')' : 'NOT SET ❌',
+        PORT: process.env.PORT || 'not set'
+      },
+      mongodb: {
+        readyState: mongoose.connection.readyState,
+        connected: mongoose.connection.readyState === 1,
+        host: mongoose.connection.host || 'not connected',
+        database: mongoose.connection.name || 'not connected'
+      },
+      tests: {}
+    };
+
+    // Quick connection test
+    diagnosis.tests.connection = mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Not connected';
+
+    // Quick user count test
+    try {
+      const userCount = await User.countDocuments();
+      diagnosis.tests.users = `✅ Accessible (${userCount} users)`;
+    } catch (error) {
+      diagnosis.tests.users = '❌ Error: ' + error.message;
+    }
+
+    // Quick booking count test
+    try {
+      const bookingCount = await Booking.countDocuments();
+      diagnosis.tests.bookings = `✅ Accessible (${bookingCount} bookings)`;
+    } catch (error) {
+      diagnosis.tests.bookings = '❌ Error: ' + error.message;
+    }
+
+    // JWT test
+    diagnosis.tests.jwt = process.env.JWT_SECRET ? '✅ JWT_SECRET available' : '❌ JWT_SECRET not set';
+
+    // Overall status
+    const criticalIssues = [
+      diagnosis.environment.MONGO_URI.includes('NOT SET'),
+      diagnosis.environment.JWT_SECRET.includes('NOT SET'),
+      diagnosis.tests.connection.includes('❌'),
+      diagnosis.tests.users.includes('❌'),
+      diagnosis.tests.bookings.includes('❌'),
+      diagnosis.tests.jwt.includes('❌')
+    ].filter(Boolean).length;
+
+    diagnosis.overall = {
+      status: criticalIssues === 0 ? '✅ ALL SYSTEMS OPERATIONAL' : `❌ ${criticalIssues} ISSUES DETECTED`,
+      action_required: criticalIssues > 0 ? 'Set environment variables in Render dashboard' : null
+    };
+
+    console.log('📋 Diagnosis:', diagnosis.overall.status);
+    res.json(diagnosis);
   });
 
   // Serve static frontend files (CSS, JS, images)
