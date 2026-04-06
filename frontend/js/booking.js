@@ -7,7 +7,6 @@ let pickupAddress = '';
 let numTravelers = 1;
 let currentBooking = null;
 let pendingTripSelection = null;
-let extraDays = 0;
 
 // Helper Functions for Extra Charges
 function parseTripDays(durationString) {
@@ -20,20 +19,21 @@ function calculateExtraCharges(tripData, travelPickupDays, travelerCount) {
   const tripDays = parseTripDays(tripData.duration);
   const standardTravelers = tripData.standardTravelers || 2;
   const pricePerDay = tripData.pricePerDay || 50;
-  const pricePerPerson = tripData.pricePerPerson || 100;
 
   const calculatedExtraDays = Math.max(0, travelPickupDays - tripDays);
-  const calculatedExtraPersons = Math.max(0, travelerCount - standardTravelers);
-  
   const extraDaysCharge = calculatedExtraDays * pricePerDay;
-  const extraPersonsCharge = calculatedExtraPersons * pricePerPerson;
+
+  // For extra persons, multiply the entire trip price by the number of travelers
+  const basePrice = tripData.price;
+  const totalPriceForTravelers = basePrice * travelerCount;
+  const extraPersonsCharge = totalPriceForTravelers - basePrice; // Additional cost for extra travelers
 
   return {
     tripDays,
     extraDays: calculatedExtraDays,
     extraDaysCharge,
     standardTravelers,
-    extraPersons: calculatedExtraPersons,
+    extraPersons: Math.max(0, travelerCount - 1), // Extra persons beyond 1
     extraPersonsCharge,
     totalExtra: extraDaysCharge + extraPersonsCharge
   };
@@ -204,7 +204,6 @@ async function proceedToPayment() {
   const travelDate = document.getElementById('travelDate').value;
   const address = document.getElementById('pickupAddress')?.value.trim() || '';
   const travelers = document.getElementById('numTravelers')?.value || '1';
-  const extraDaysInput = document.getElementById('extraDays')?.value || '0';
 
   if (!pickupDate) {
     alert('Please select a pickup date');
@@ -244,14 +243,13 @@ async function proceedToPayment() {
   selectedDate = travelDate;
   pickupAddress = address;
   numTravelers = parseInt(travelers, 10);
-  extraDays = parseInt(extraDaysInput, 10) || 0;
 
   console.log('📝 Proceeding to payment with:');
   console.log('   Trip:', selectedTrip._id);
   console.log('   Pickup Date:', pickupDate);
   console.log('   Travel Date:', travelDate);
   console.log('   Address:', address);
-  console.log('   Extra Days:', extraDays);
+  console.log('   Travelers:', numTravelers);
 
   const bookingResult = await createBooking(pickupDate, pickupAddress, numTravelers);
   if (!bookingResult || !bookingResult._id) {
@@ -281,9 +279,9 @@ async function createBooking(pickupDate, pickupAddress, numTravelers) {
   // Calculate extra charges
   const charges = calculateExtraCharges(selectedTrip, travelDays, numTravelers);
   
-  // Calculate total price
+  // Calculate total price: base price × number of travelers + extra days charge
   const basePrice = selectedTrip.price;
-  const totalPrice = basePrice + charges.extraDaysCharge + charges.extraPersonsCharge;
+  const totalPrice = (basePrice * numTravelers) + charges.extraDaysCharge;
 
   const bookingPayload = { 
     tripId: selectedTrip._id,
@@ -373,7 +371,7 @@ function showPaymentSummary(pickupDate) {
   const charges = calculateExtraCharges(selectedTrip, travelDays, numTravelers);
   
   const basePrice = selectedTrip.price;
-  const totalPrice = basePrice + charges.extraDaysCharge + charges.extraPersonsCharge;
+  const totalPrice = (basePrice * numTravelers) + charges.extraDaysCharge;
   
   // Build summary with itemized charges
   let summaryHTML = `
@@ -386,14 +384,11 @@ function showPaymentSummary(pickupDate) {
     
     <div class="border-t border-teal-300 pt-2 mt-2">
       <h5 class="font-bold text-gray-800 mb-2">💰 Price Breakdown:</h5>
-      <div class="flex justify-between text-sm"><span>Base Price:</span><span>$${basePrice}</span></div>`;
+      <div class="flex justify-between text-sm"><span>Base Price per Person:</span><span>$${basePrice}</span></div>
+      <div class="flex justify-between text-sm"><span>Travelers (${numTravelers}):</span><span>$${basePrice} × ${numTravelers} = $${basePrice * numTravelers}</span></div>`;
   
   if (charges.extraDaysCharge > 0) {
     summaryHTML += `<div class="flex justify-between text-sm text-orange-600"><span>Extra Days (${charges.extraDays} days × $${selectedTrip.pricePerDay || 50}):</span><span>+$${charges.extraDaysCharge}</span></div>`;
-  }
-  
-  if (charges.extraPersonsCharge > 0) {
-    summaryHTML += `<div class="flex justify-between text-sm text-orange-600"><span>Extra Persons (${charges.extraPersons} person(s) × $${selectedTrip.pricePerPerson || 100}):</span><span>+$${charges.extraPersonsCharge}</span></div>`;
   }
   
   summaryHTML += `
