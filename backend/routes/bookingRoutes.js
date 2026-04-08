@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
+const { isDBAvailable } = require('../config/db');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -18,6 +19,16 @@ router.post('/', protect, async (req, res) => {
     console.log('   Address:', pickupAddress);
     console.log('   Total Price:', totalPrice);
     console.log('   Extra Charges - Days:', extraDays, 'Persons:', extraPersons);
+
+    // Check if database is really available
+    const dbAvailable = await isDBAvailable();
+    if (!dbAvailable) {
+      console.error('❌ Database not available during booking');
+      return res.status(503).json({
+        message: 'Database not available. Please contact support.',
+        hint: 'MongoDB connection failed. Check MONGO_URI environment variable.'
+      });
+    }
 
     // Validate user
     if (!req.user || !req.user._id) {

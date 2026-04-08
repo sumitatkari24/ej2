@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { isDBAvailable } = require('../config/db');
 
 const router = express.Router();
 
@@ -15,15 +16,17 @@ router.post('/register', async (req, res) => {
   
   try {
     console.log('Register attempt for:', email);
-    
-    // Check if mongoose is connected
-    if (!require('mongoose').connection.readyState) {
-      return res.status(503).json({ 
+
+    // Check if database is really available
+    const dbAvailable = await isDBAvailable();
+    if (!dbAvailable) {
+      console.error('❌ Database not available during registration');
+      return res.status(503).json({
         message: 'Database not available. Please contact support.',
         hint: 'MongoDB connection failed. Check MONGO_URI environment variable.'
       });
     }
-    
+
     const userExists = await User.findOne({ email });
     
     if (userExists) {

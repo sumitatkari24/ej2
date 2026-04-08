@@ -26,8 +26,13 @@ async function testConnection() {
   try {
     console.log('\n🔗 Attempting to connect to MongoDB...');
     const conn = await mongoose.connect(mongoUri, {
-      connectTimeoutMS: 10000,
-      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+      bufferCommands: false,
+      maxIdleTimeMS: 30000,
+      family: 4
     });
 
     console.log('✅ SUCCESS: MongoDB Connected!');
@@ -47,6 +52,21 @@ async function testConnection() {
     console.log('   Users:', userCount);
     console.log('   Bookings:', bookingCount);
     console.log('   Trips:', tripCount);
+
+    // Test a write operation
+    console.log('\n🧪 Testing write operation...');
+    const testUser = new User({
+      name: 'Test User ' + Date.now(),
+      email: 'test' + Date.now() + '@example.com',
+      password: 'hashedpassword'
+    });
+
+    await testUser.save();
+    console.log('✅ Write operation successful');
+
+    // Clean up test user
+    await User.findByIdAndDelete(testUser._id);
+    console.log('✅ Cleanup successful');
 
     await mongoose.connection.close();
     console.log('\n✅ Connection test PASSED - Ready for Render deployment');
