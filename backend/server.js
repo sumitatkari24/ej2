@@ -14,8 +14,18 @@ const Trip = require('./models/Trip');
 const User = require('./models/User');
 const Booking = require('./models/Booking');
 
-// load env from backend/.env (since server is run from project root)
-dotenv.config({ path: __dirname + '/.env' });
+const envPath = path.join(__dirname, '.env');
+dotenv.config({ path: envPath });
+
+if (!process.env.MONGO_URI || !process.env.MONGO_URI.trim()) {
+  console.error('❌ Missing MongoDB connection string. Set MONGO_URI in Render or backend/.env.');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET || !process.env.JWT_SECRET.trim()) {
+  console.error('❌ Missing JWT secret. Set JWT_SECRET in Render or backend/.env.');
+  process.exit(1);
+}
 
 let mongoConnected = false;
 
@@ -121,13 +131,16 @@ async function seedDatabase() {
 
 // Initialize server
 async function startServer() {
-  // Try to connect to MongoDB (but don't crash if it fails)
+  // Try to connect to MongoDB and stop startup if it fails
   mongoConnected = await connectDB();
 
-  // Seed database if connected
-  if (mongoConnected) {
-    await seedDatabase();
+  if (!mongoConnected) {
+    console.error('❌ Unable to start server because MongoDB connection failed.');
+    process.exit(1);
   }
+
+  // Seed database only after successful connection
+  await seedDatabase();
 
   const app = express();
 
